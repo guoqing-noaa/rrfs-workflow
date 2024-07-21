@@ -59,8 +59,18 @@ ${cpreq} ${FIXrrfs}/graphinfo/${NET}_mpas.graph.info.part.${NTASKS} .
 ### temporarily solution since mpas model uses different modules files that other components
 set +x # supress messy output in the module load process
 module purge
-module use ${HOMErrfs}/modulefiles
-module load build/${MACHINE}.intel
+module load gnu
+module load intel/2023.2.0
+module load impi/2023.2.0
+module load pnetcdf/1.12.3
+module load szip
+module load hdf5parallel/1.10.5
+module load netcdf-hdf5parallel/4.7.0
+module use /mnt/lfs4/HFIP/hfv3gfs/nwprod/NCEPLIBS/modulefiles
+module load netcdf/4.7.0
+PNETCDF=/apps/pnetcdf/1.12.3/intel_2023.2.0-impi
+module use "/lfs5/BMC/nrtrr/FIX_RRFS2/modulefiles"
+module load "prod_util/2.1.1"
 module list
 set -x  
 ### temporarily solution since mpas model uses different modules files that other components
