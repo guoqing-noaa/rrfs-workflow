@@ -16,12 +16,12 @@ export pid=${pid:-$$}
 if [[ -z "${ENS_INDEX}" ]]; then
   export RUN="rrfs"
 else
-  export RUN="ens"
+  export RUN="ensrrfs"
 fi
 export jobid=${jobid:-${RUN}_${task_id}_${cyc}}
 
 export DATA=${DATA:-${DATAROOT}/${jobid}}
-if [ -d ${DATA}/${FHR} ]; then #remove the ${DATA}/${FHR} directory before a new run
+if [ -d ${DATA}/${FHR} ]; then # remove the ${DATA}/${FHR} directory if existed
   rm -rf ${DATA}/${FHR}
 fi
 mkdir -p ${DATA}
