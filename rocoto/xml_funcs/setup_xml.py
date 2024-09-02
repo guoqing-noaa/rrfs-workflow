@@ -54,8 +54,8 @@ def setup_xml(HOMErrfs, expdir):
       ioda_bufr(xmlFile,expdir)
       ungrib_ic(xmlFile,expdir)
       ungrib_lbc(xmlFile,expdir)
-      #ic(xmlFile,expdir)
-      #lbc(xmlFile,expdir)
+      ic(xmlFile,expdir)
+      lbc(xmlFile,expdir)
       #if os.getenv("FCST_ONLY","FALSE").upper()=="FALSE":
       #  da(xmlFile,expdir)
       #fcst(xmlFile,expdir)
@@ -70,8 +70,8 @@ def setup_xml(HOMErrfs, expdir):
     if do_ensemble == "TRUE":
       ungrib_ic(xmlFile,expdir,do_ensemble=True)
       ungrib_lbc(xmlFile,expdir,do_ensemble=True)
-      #ic(xmlFile,expdir,do_ensemble=True)
-      #lbc(xmlFile,expdir,do_ensemble=True)
+      ic(xmlFile,expdir,do_ensemble=True)
+      lbc(xmlFile,expdir,do_ensemble=True)
       #if os.getenv("ENS_FCST_ONLY","FALSE").upper()=="FALSE":
       #  ens_da(xmlFile,expdir)
       #fcst(xmlFile,expdir,do_ensemble=True)

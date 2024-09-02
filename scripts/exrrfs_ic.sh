@@ -58,7 +58,7 @@ sed -e "s/@input_stream@/static.nc/" -e "s/@output_stream@/init.nc/" \
     -e "s/@lbc_interval@/3/" ${PARMrrfs}/rrfs/streams.init_atmosphere > streams.init_atmosphere
 
 #prepare for init_atmosphere
-ln -snf ${COMINrrfs}/${RUN}.${PDY}/${cyc}${ensindexstr}/ungrib/${prefix}:${start_time:0:13} .
+ln -snf ${COMINrrfs}/${RUN}.${PDY}/${cyc}${ensindexstr}/ungrib_ic/${prefix}:${start_time:0:13} .
 ${cpreq} ${FIXrrfs}/meshes/${NET}.static.nc static.nc
 ${cpreq} ${FIXrrfs}/graphinfo/${NET}.graph.info.part.${NTASKS} .
 
