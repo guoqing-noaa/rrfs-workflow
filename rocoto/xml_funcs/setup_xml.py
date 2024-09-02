@@ -51,7 +51,7 @@ def setup_xml(HOMErrfs, expdir):
 # ---------------------------------------------------------------------------
 # create tasks for a deterministic experiment (i.e. setup/generate an xml file)
     if do_deterministic == "TRUE":
-      #ioda_bufr(xmlFile,expdir)
+      ioda_bufr(xmlFile,expdir)
       ungrib_ic(xmlFile,expdir)
       ungrib_lbc(xmlFile,expdir)
       #ic(xmlFile,expdir)
