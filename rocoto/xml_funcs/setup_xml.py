@@ -56,13 +56,13 @@ def setup_xml(HOMErrfs, expdir):
       ungrib_lbc(xmlFile,expdir)
       ic(xmlFile,expdir)
       lbc(xmlFile,expdir)
-      #if os.getenv("FCST_ONLY","FALSE").upper()=="FALSE":
-      #  da(xmlFile,expdir)
-      #fcst(xmlFile,expdir)
+      if os.getenv("FCST_ONLY","FALSE").upper()=="FALSE":
+        da(xmlFile,expdir)
+      fcst(xmlFile,expdir)
+      #mpassit(xmlFile,expdir)
+      #upp(xmlFile,expdir)
       #
-      #if machine == "jet": #currently only support mpassit on jet using pre-compiled mpassit
-      #  mpassit(xmlFile,expdir)
-      #  upp(xmlFile,expdir)
+      #if machine == "jet": #currently only support graphics on jet
       #  graphics(xmlFile,expdir)
       #
 # ---------------------------------------------------------------------------
@@ -72,12 +72,11 @@ def setup_xml(HOMErrfs, expdir):
       ungrib_lbc(xmlFile,expdir,do_ensemble=True)
       ic(xmlFile,expdir,do_ensemble=True)
       lbc(xmlFile,expdir,do_ensemble=True)
-      #if os.getenv("ENS_FCST_ONLY","FALSE").upper()=="FALSE":
-      #  ens_da(xmlFile,expdir)
-      #fcst(xmlFile,expdir,do_ensemble=True)
-      #if machine == "jet": #currently only support mpassit on jet using pre-compiled mpassit
-      #  mpassit(xmlFile,expdir,do_ensemble=True)
-      #  upp(xmlFile,expdir,do_ensemble=True)
+      if os.getenv("ENS_FCST_ONLY","FALSE").upper()=="FALSE":
+        ens_da(xmlFile,expdir)
+      fcst(xmlFile,expdir,do_ensemble=True)
+      #mpassit(xmlFile,expdir,do_ensemble=True)
+      #upp(xmlFile,expdir,do_ensemble=True)
 
 # ---------------------------------------------------------------------------
     if os.getenv("REALTIME").upper() == "TRUE": # write out the clean task for realtime runs and retros don't need it
