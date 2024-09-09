@@ -24,14 +24,15 @@ yaml_list=(
 
 # run bufr2ioda.x
 for yaml in ${yaml_list[@]}; do
- sed -e "s/@referenceTime@/${REFERENCE_TIME}/" ${PARMrrfs}/rrfs/${yaml} > ${yaml}
+ sed -e "s/@referenceTime@/${REFERENCE_TIME}/" ${PARMrrfs}/${yaml} > ${yaml}
  source prep_step
- srun ./bufr2ioda.x ${yaml}
+ ${MPI_RUN_CMD} ./bufr2ioda.x ${yaml}
  # some data may not be available at all cycles, so we don't check whether bufr2ioda.x runs successfully
 done
 ls ./ioda*nc  
-export err=$?
-err_chk
-
-# copy ioda*.nc to COMOUT
-${cpreq} ${DATA}/ioda*.nc ${COMOUT}/${task_id}/
+if (( $? == 0 )); then
+  # copy ioda*.nc to COMOUT
+  ${cpreq} ${DATA}/ioda*.nc ${COMOUT}/${task_id}/
+else
+  echo "WARNING: no ioda files generated."
+fi

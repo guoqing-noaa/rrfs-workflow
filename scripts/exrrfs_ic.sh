@@ -50,12 +50,12 @@ zeta_levels=${FIXrrfs}/meshes/L60.txt
 decomp_file_prefix="${NET}.graph.info.part."
 #
 physics_suite=${PHYSICS_SUITE:-'PHYSICS_SUITE_not_defined'}
-file_content=$(< ${PARMrrfs}/rrfs/${physics_suite}/namelist.init_atmosphere) # read in all content
+file_content=$(< ${PARMrrfs}/${physics_suite}/namelist.init_atmosphere) # read in all content
 eval "echo \"${file_content}\"" > namelist.init_atmosphere
 
 # generate the streams file on the fly using sed as this file contains "filename_template='lbc.$Y-$M-$D_$h.$m.$s.nc'"
 sed -e "s/@input_stream@/static.nc/" -e "s/@output_stream@/init.nc/" \
-    -e "s/@lbc_interval@/3/" ${PARMrrfs}/rrfs/streams.init_atmosphere > streams.init_atmosphere
+    -e "s/@lbc_interval@/3/" ${PARMrrfs}/streams.init_atmosphere > streams.init_atmosphere
 
 #prepare for init_atmosphere
 ln -snf ${COMINrrfs}/${RUN}.${PDY}/${cyc}${ensindexstr}/ungrib_ic/${prefix}:${start_time:0:13} .
@@ -65,7 +65,8 @@ ${cpreq} ${FIXrrfs}/graphinfo/${NET}.graph.info.part.${NTASKS} .
 # run init_atmosphere_model
 source prep_step
 ${cpreq} ${EXECrrfs}/init_atmosphere_model.x .
-srun ./init_atmosphere_model.x
+${MPI_RUN_CMD} ./init_atmosphere_model.x
+export err=$?; err_chk
 if [[ ! -s './init.nc' ]]; then
   echo "FATAL ERROR: failed to generate init.nc"
   err_exit
