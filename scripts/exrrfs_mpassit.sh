@@ -31,7 +31,7 @@ elif [[ "${NET}" == "conus3km" ]]; then
   ref_lat=38.5
 fi
 sed -e "s/@timestr@/${timestr}/" -e "s/@nx@/${nx}/" -e "s/@ny@/${ny}/" -e "s/@dx@/${dx}/" \
-    -e "s/@ref_lat@/${ref_lat}/" -e "s/@timestr2@/${timestr2}/" ${PARMrrfs}/rrfs/namelist.mpassit > namelist.mpassit
+    -e "s/@ref_lat@/${ref_lat}/" -e "s/@timestr2@/${timestr2}/" ${PARMrrfs}/namelist.mpassit > namelist.mpassit
 
 # run the MPAS model
 ulimit -s unlimited
@@ -57,7 +57,7 @@ set -x
 ### temporarily solution since mpassit uses different modules files that other components
 source prep_step
 ${cpreq} ${EXECrrfs}/mpassit.x .
-srun ./mpassit.x namelist.mpassit
+${MPI_RUN_CMD} ./mpassit.x namelist.mpassit
 # check the status, copy output to COMOUT
 if [[ -s "./mpassit.${timestr2}.nc" ]]; then
   ${cpreq} ${DATA}/${FHR}/mpassit.${timestr2}.nc ${COMOUT}${ensindexstr}/${task_id}/

@@ -45,7 +45,7 @@ fi
 # namelist.atmosphere and streams.atmosphere
 #sed -e "s/@restart_interval@/${restart_interval}/" -e "s/@history_interval@/${history_interval}/" \
 #    -e "s/@diag_interval@/${diag_interval}/" -e "s/@lbc_interval@/${lbc_interval}/" \
-#    ${PARMrrfs}/rrfs/streams.atmosphere_fcst > streams.atmosphere
+#    ${PARMrrfs}/streams.atmosphere_fcst > streams.atmosphere
 
 # run mpasjedi_variational.x
 export OOPS_TRACE=1
@@ -56,7 +56,7 @@ ulimit -a
 
 source prep_step
 #{cpreq} ${EXECrrfs}/mpasjedi_enkf.x .
-#srun -l ./mpasjedi_enkf.x  ./$inputfile    log.out
+#${MPI_RUN_CMD} ./mpasjedi_enkf.x  ./$inputfile    log.out
 # check the status
 export err=$?
 err_chk

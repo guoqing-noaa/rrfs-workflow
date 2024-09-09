@@ -51,7 +51,7 @@ elif [[ "${NET}" == "conus3km" ]]; then
   pio_num_iotasks=40
   pio_stride=20
 fi
-file_content=$(< ${PARMrrfs}/rrfs/${physics_suite}/namelist.atmosphere) # read in all content
+file_content=$(< ${PARMrrfs}/${physics_suite}/namelist.atmosphere) # read in all content
 eval "echo \"${file_content}\"" > namelist.atmosphere
 
 # generate the streams file on the fly using sed as this file contains "filename_template='lbc.$Y-$M-$D_$h.$m.$s.nc'"
@@ -61,7 +61,7 @@ history_interval=${HISTORY_INTERVAL:-1}
 diag_interval=${DIAG_INTERVAL:-1}
 sed -e "s/@restart_interval@/${restart_interval}/" -e "s/@history_interval@/${history_interval}/" \
     -e "s/@diag_interval@/${diag_interval}/" -e "s/@lbc_interval@/${lbc_interval}/" \
-    ${PARMrrfs}/rrfs/streams.atmosphere_fcst > streams.atmosphere
+    ${PARMrrfs}/streams.atmosphere_fcst > streams.atmosphere
 
 # run the MPAS model
 ulimit -s unlimited
@@ -69,7 +69,7 @@ ulimit -v unlimited
 ulimit -a
 source prep_step
 ${cpreq} ${EXECrrfs}/atmosphere_model.x .
-srun ./atmosphere_model.x 
+${MPI_RUN_CMD} ./atmosphere_model.x 
 # check the status
 if [[ -f './log.atmosphere.0000.err' ]]; then # has to use '-f" as the 0000 err file may be size 0
   echo "FATAL ERROR: MPAS model run failed"

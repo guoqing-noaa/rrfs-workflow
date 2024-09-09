@@ -41,7 +41,7 @@ ulimit -v unlimited
 ulimit -a
 source prep_step
 ${cpreq} ${EXECrrfs}/upp.x .
-srun ./upp.x
+${MPI_RUN_CMD} ./upp.x
 # check the status copy output to COMOUT
 wrfprs="WRFPRS.GrbF${fhr}"
 wrfnat="WRFNAT.GrbF${fhr}"
