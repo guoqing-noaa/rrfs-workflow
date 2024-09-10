@@ -80,9 +80,9 @@ fi
 CDATEp1=$($NDATE 1 ${CDATE})
 timestr=$(date -d "${CDATEp1:0:8} ${CDATEp1:8:2}" +%Y-%m-%d_%H.%M.%S) 
 if [[ -z "${ENS_INDEX}" ]]; then
-  dstdir="${COMOUT}/${task_id}/"
+  dstdir="${COMOUT}/fcst/"
 else
-  dstdir="${COMOUT}/mem${ENS_INDEX}/${task_id}/"
+  dstdir="${COMOUT}/mem${ENS_INDEX}/fcst/"
 fi
 ${cpreq} ${DATA}/restart.${timestr}.nc ${dstdir}
 ${cpreq} ${DATA}/diag.*.nc ${dstdir}

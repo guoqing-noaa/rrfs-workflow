@@ -64,5 +64,5 @@ if [[ "${begin}" == "YES" ]]; then
   # mpasjedi cannot run on init.nc due to the miss of pressure values
   : #do nothing
 else
-  ${cpreq} ${DATA}/data/restart.${timestr}.nc ${COMOUT}/${task_id}/
+  ${cpreq} ${DATA}/data/restart.${timestr}.nc ${COMOUT}/da/
 fi
