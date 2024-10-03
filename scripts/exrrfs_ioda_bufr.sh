@@ -36,3 +36,4 @@ if (( $? == 0 )); then
 else
   echo "WARNING: no ioda files generated."
 fi
+
