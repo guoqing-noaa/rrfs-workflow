@@ -61,8 +61,7 @@ err_chk
 
 # copy output to COMOUT
 if [[ "${begin}" == "YES" ]]; then
-  # mpasjedi cannot run on init.nc due to the miss of pressure values
-  : #do nothing
+  : # do nothing on init.nc for now
 else
   ${cpreq} ${DATA}/data/restart.${timestr}.nc ${COMOUT}/da/
 fi
