@@ -12,6 +12,7 @@ load("parallel-netcdf/1.12.2")
 load("parallelio/2.5.10")
 
 setenv("PIO", os.getenv("parallelio_ROOT"))
+setenv("NETCDF", os.getenv("netcdf_fortran_ROOT"))
 
 setenv("CMAKE_C_COMPILER", "cc")
 setenv("CMAKE_CXX_COMPILER", "CC")
