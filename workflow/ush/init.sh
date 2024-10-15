@@ -19,9 +19,9 @@ case ${MACHINE} in
     ;;
   gaea)
     if [[ -d /gpfs/f5 ]]; then
-      FIX_RRFS2=/gpfs/f5/gsl-glo/world-shared/role.rrfsfix/FIX_RRFS2
+      FIX_RRFS_LOCATION=/gpfs/f5/gsl-glo/world-shared/role.rrfsfix/FIX_RRFS2
     elif [[ -d /gpfs/f6 ]]; then
-      FIX_RRFS2=/gpfs/f6/bil-fire10-oar/world-shared/role.rrfsfix/FIX_RRFS2
+      FIX_RRFS_LOCATION=/gpfs/f6/bil-fire10-oar/world-shared/role.rrfsfix/FIX_RRFS2
     else
       echo "unsupported gaea cluster: ${MACHINE}"
     fi
