@@ -28,6 +28,7 @@ fi
 export cpreq="ln -snf" #use soft link instead of copy for non-NCO experiments
 export COMOUT="${COMROOT}/${NET}/${rrfs_ver}/${RUN}.${PDY}/${cyc}" # task_id not included as compath.py may not be able to find this subdirectory
 export COMINrrfs="${COMROOT}/${NET}/${rrfs_ver}" # we may need to use data from previous cycles
+export UMBRELLA="${DATAROOT}/${NET}/${rrfs_ver}/${RUN}.${PDY}/${cyc}/umbrella"
 export NTASKS=${SLURM_NTASKS}
 #
 echo "load rrfs-workflow modules by default"
