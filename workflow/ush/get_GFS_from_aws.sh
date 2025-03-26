@@ -7,7 +7,7 @@
 #SBATCH --job-name=aws_GFS
 #SBATCH --output=./log.aws_GFS
 # https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20240526/18/atmos/gfs.t18z.pgrb2.0p25.f022
-# https://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20240526/18/atmos/gfs.t18z.pgrb2b.0p25.f022
+# ht tps://noaa-gfs-bdp-pds.s3.amazonaws.com/gfs.20240526/18/atmos/gfs.t18z.pgrb2b.0p25.f022
 
 datadir=/scratch2/BMC/rtrr/RRFS2_RETRO_DATA/sandbox/GFS  #set you own datadir, absolute path
 
