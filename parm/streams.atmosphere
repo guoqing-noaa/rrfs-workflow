@@ -12,7 +12,7 @@
                   io_type="pnetcdf,cdf5"
                   input_interval="initial_only" />
 
-<stream name="da_state"
+<immutable stream name="da_state"
         type="input;output"
         precision="single"
         clobber_mode="truncate"
@@ -20,9 +20,7 @@
         packages="jedi_da"
         io_type="pnetcdf,cdf5"
         input_interval="initial_only"
-        output_interval="1:00:00" >
-        <file name="stream_list/stream_list.atmosphere.da_state"/>
-</stream>
+        output_interval="1:00:00" />
 
 <immutable_stream name="restart"
                   type="input;output"
