@@ -29,6 +29,34 @@ module use "${HOMErrfs}/modulefiles"
 module load "rrfs/${MACHINE}.intel"
 module list
 
+# git clone a repo/branch
+cd "${HOMErrfs}/sorc"
+repo="https://github.com/ufs-community/MPAS-Model"
+checkout="gsl/develop"
+mv MPAS-Model "MPAS-Model.$(date +%s)"
+git clone "${repo}" MPAS-Model
+cd MPAS-Model || exit 1
+git checkout "${checkout}"
+git submodule update --init --recursive
+cd src/core_atmosphere || exit 1
+# change `da_sate` to immutable
+awk '
+/<stream name="da_state"/ {
+    in_stream = 1
+}
+in_stream && /immutable="false"/ {
+    gsub(/immutable="false"/, "immutable=\"true\"")
+    print
+    getline   # Skip the next line
+    next
+}
+in_stream && /<\/stream>/ {
+    in_stream = 0
+}
+{ print }
+' Registry.xml > tmp.xml
+mv tmp.xml Registry.xml
+
 cd "${HOMErrfs}/sorc/MPAS-Model" || exit 1
 make clean CORE=init_atmosphere
 make -j8 "${compiler_str}" CORE=init_atmosphere PRECISION=single
