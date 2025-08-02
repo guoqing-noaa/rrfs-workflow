@@ -30,6 +30,19 @@ module load "rrfs/${MACHINE}.intel"
 module list
 
 cd "${HOMErrfs}/sorc/MPAS-Model" || exit 1
+
+# remove the packages attributes from the da_state stream
+sed -i -e 's#<var name="re_cloud" packages="mp_thompson_in;mp_wsm6_in;mp_tempo_in"/>#<var name="re_cloud"/>#' \
+  -e 's#<var name="re_ice" packages="mp_thompson_in;mp_wsm6_in;mp_tempo_in"/>#<var name="re_ice"/>#' \
+  -e 's#<var name="re_snow" packages="mp_thompson_in;mp_wsm6_in;mp_tempo_in"/>#<var name="re_snow"/>#' \
+  -e 's#<var name="vcpool" packages="cu_grell_freitas_in"/>#<var name="vcpool"/>#' \
+  -e 's#<var name="sub3d_rthcuten" packages="cu_grell_freitas_in"/>#<var name="sub3d_rthcuten"/>#' \
+  -e 's#<var name="sub3d_rqvcuten" packages="cu_grell_freitas_in"/>#<var name="sub3d_rqvcuten"/>#' \
+  -e 's#<var name="sub3d_rucuten" packages="cu_grell_freitas_in"/>#<var name="sub3d_rucuten"/>#' \
+  -e 's#<var name="sub3d_rvcuten" packages="cu_grell_freitas_in"/>#<var name="sub3d_rvcuten"/>#' \
+  -e 's#<var name="sigma_deep" packages="cu_grell_freitas_in"/>#<var name="sigma_deep"/>#' \
+  src/core_atmosphere/Registry.xml
+
 make clean CORE=init_atmosphere
 make -j8 "${compiler_str}" CORE=init_atmosphere PRECISION=single
 make clean CORE=atmosphere
