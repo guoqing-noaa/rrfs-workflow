@@ -34,6 +34,7 @@
 &restart
     config_do_restart = false
     config_do_DAcycling = ${do_DAcycling}
+    config_do_cycling = ${do_cycling}
 /
 &printout
     config_print_global_minmax_vel = true
