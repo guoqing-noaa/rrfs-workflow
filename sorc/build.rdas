@@ -62,6 +62,9 @@ cp ../_workaround_/RDASApp/saber/GridCheckHelper.cc sorc/saber/src/saber/gsi/uti
 cp ../_workaround_/RDASApp/saber/GSIParameters.h sorc/saber/src/saber/gsi/utils/GSIParameters.h
 cp ../_workaround_/RDASApp/saber/Geometry.cc sorc/saber/src/saber/interpolation/Geometry.cc
 
+cp ../_workaround_/MPAS-Model/src/framework/mpas_io_streams.F sorc/mpas/src/framework/mpas_io_streams.F
+cp ../_workaround_/MPAS-Model/src/framework/mpas_io_streams.F sorc/mpas-jedi/src/framework/mpas_io_streams.F
+
 rm -rf build/
 ./build.sh -m MPAS -t NO -w NO
 
