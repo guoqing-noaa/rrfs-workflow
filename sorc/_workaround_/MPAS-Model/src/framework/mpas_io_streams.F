@@ -4199,7 +4199,7 @@ module mpas_io_streams
       if (.not. stream % fileHandle % data_mode) then
          ! Can always write an attribute in define mode.
          STREAM_DEBUG_WRITE('Able to write attribute "' // trim(attName) // '" in define mode.')
-         MPAS_checkStreamAtt = .false.
+         MPAS_checkStreamAtt = .true.
          return
       endif
       call MPAS_io_has_att(stream % fileHandle, attName, ierr=io_err) 
