@@ -49,7 +49,7 @@
     config_met_interp = true
     config_input_sst = false
     config_frac_seaice = true
-    config_tempo_rap = false
+    config_tempo_rap = true
 /
 &physics
     config_tsk_seaice_threshold = 271.4
