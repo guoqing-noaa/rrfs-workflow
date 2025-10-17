@@ -46,4 +46,18 @@ elif [[ ${MESH_NAME} == "south3.5km" ]]; then
   export MPASSIT_DX=3500.0
   export MPASSIT_REF_LAT=34.0
   export MPASSIT_REF_LON=-91.5
+
+elif [[ ${MESH_NAME} == "ea5km" ]]; then
+  export FCST_DT=20
+  export FCST_SUBSTEPS=4
+  export FCST_RADT=15
+  export FCST_PIO_NUM_IOTASKS=20
+  export FCST_PIO_STRIDE=16
+  export UPP_DOMAIN="ea."
+
+  export MPASSIT_NX=840
+  export MPASSIT_NY=760
+  export MPASSIT_DX=5000.0
+  export MPASSIT_REF_LAT=35.0
+  export MPASSIT_REF_LON=132.0
 fi
