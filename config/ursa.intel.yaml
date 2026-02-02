@@ -3,8 +3,9 @@ fix: &fix_location
 base: &common # All configs inherit from this base
   - 'module help > /dev/null 2>&1 || source $(bash -l -c "echo $MODULESHOME")/init/profile'
   - "module purge"
-  - "module use /contrib/spack-stack/spack-stack-1.9.2/envs/ue-oneapi-2024.2.1/install/modulefiles/Core"
+  - "module use /contrib/spack-stack/spack-stack-1.9.3/envs/ue-oneapi-2024.2.1/install/modulefiles/Core"
   - "module load stack-oneapi/2024.2.1"
+  - "module load stack-python/3.11.7"
   - "module load stack-intel-oneapi-mpi/2021.13"
   - *fix_location
 wps:
@@ -63,12 +64,8 @@ rank_run:
   - *common
   - "module load cmake/3.27.9"
 rdasapp:
-  - 'module help > /dev/null 2>&1 || source $(bash -l -c "echo $MODULESHOME")/init/profile'
-  - "module purge"
-  - "module use /contrib/spack-stack/spack-stack-1.9.3/envs/ue-oneapi-2024.2.1/install/modulefiles/Core"
-  - "module load stack-oneapi/2024.2.1"
-  - "module load stack-python/3.11.7"
-  - "module load stack-intel-oneapi-mpi/2021.13"
+  - *common
+  - *fix_location
   - "module load jedi-mpas-env/1.0.0"
   - "module load jedi-fv3-env/1.0.0"
   - "module load py-jinja2/3.1.4"
@@ -79,4 +76,3 @@ rdasapp:
   - "export MPIEXEC_NPROC=-n"
   - "export BUILD_JOBS=12"
   - "export RDAS_DATA=/scratch4/BMC/rtrr/RDAS_DATA"
-  - *fix_location
