@@ -3,4 +3,4 @@ declare -rx PS4='+ $(basename ${BASH_SOURCE[0]:-${FUNCNAME[0]:-"Unknown"}})[${LI
 set -x
 date
 echo "This is a misc task!"
-exit 0
+exit $?

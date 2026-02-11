@@ -88,7 +88,7 @@ EOF
       posttwo="POSTTWO.GrbF${fhr2}"
       if [[ ! -s "./${postprs}" ]]; then
         echo "FATAL ERROR: failed to genereate POST grib2 files"
-        err_exit
+        source err_exit
       fi
 
       mv itag "itag_${fhr2}"
@@ -110,6 +110,6 @@ EOF
 
     else
       echo "FATAL ERROR: cannot find mpass file at ${timestr}"
-      err_exit
+      source err_exit
     fi
 done

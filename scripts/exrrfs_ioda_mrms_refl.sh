@@ -167,7 +167,7 @@ EOF
   ${MPI_RUN_CMD} ./${pgm}
 # check the status
   export err=$?
-  err_chk
+  err_chk || exit $err
 
   cp RefInGSI3D.dat  "${COMOUT}/ioda_mrms_refl/${WGF}/rrfs.t${HH}z.RefInGSI3D.bin.${bigmin}"
 
@@ -187,7 +187,7 @@ EOF
     ${cpreq} "ioda_mrms_${YYYYMMDD}${HH}_${bigmin}.nc4" "${COMOUT}/ioda_mrms_refl/${WGF}"
   else
     echo "FATAL ERROR: no ioda MRMS file generated."
-    err_exit # err_exit if no ioda files generated at the development stage
+    source err_exit # err_exit if no ioda files generated at the development stage
   fi
 
 done # done with the bigmin for-loop

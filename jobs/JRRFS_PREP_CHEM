@@ -46,7 +46,7 @@ export COMOUT=${COMOUT:-$(compath.py -o "${NET}/${rrfs_ver}/${RUN}.${PDY}/${cyc}
 #----------------------------------------
 export pgmout="${DATA}/OUTPUT.$$"
 "${HOMErrfs}"/scripts/exrrfs_prep_chem.sh 
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 
 if [[ -e "${pgmout}" ]]; then
   cat "${pgmout}"

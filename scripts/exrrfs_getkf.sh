@@ -98,7 +98,7 @@ case ${YAML_GEN_METHOD:-1} in
     ;;
   *)
     echo "unknown YAML_GEN_METHOD:${YAML_GEN_METHOD}"
-    err_exit
+    source err_exit
     ;;
 esac
 
@@ -112,7 +112,7 @@ if [[ ${start_type} == "warm" ]] || [[ ${start_type} == "cold" && ${COLDSTART_CY
   ${MPI_RUN_CMD} ./mpasjedi_enkf.x getkf.yaml log.out
   # check the status
   export err=$?
-  err_chk
+  err_chk || exit $err
   #
   cp "${DATA}"/getkf*.yaml "${COMOUT}/getkf_${GETKF_TYPE}/${WGF}"
   cp "${DATA}"/log.* "${COMOUT}/getkf_${GETKF_TYPE}/${WGF}"

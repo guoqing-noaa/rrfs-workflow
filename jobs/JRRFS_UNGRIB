@@ -72,7 +72,7 @@ mkdir -p "${COMOUT}/ungrib_${TYPE}/${WGF}${MEMDIR}"
 #
 export pgmout="${DATA}/OUTPUT.$$"
 "${HOMErrfs}"/scripts/exrrfs_ungrib.sh
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 
 if [[ -e "${pgmout}" ]]; then
   cat "${pgmout}"

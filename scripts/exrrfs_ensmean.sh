@@ -82,7 +82,7 @@ if (( NTASKS > NUM_CMDS )); then
   done
 elif (( NTASKS < NUM_CMDS )); then
   echo "ERROR: SLURM_NTASKS (${NTASKS}) < number of commands (${NUM_CMDS})"
-  err_exit
+  source err_exit
 fi
 
 echo "Running all NCEA commands with ${NTASKS} tasks for ${NUM_CMDS} commands"
@@ -92,7 +92,7 @@ srun --multi-prog "${CMDFILE}".multi
 export err=$?
 if (( err != 0 )); then
     echo "NCEA parallel execution failed with error code ${err}"
-    err_exit
+    source err_exit
 else
     echo "NCEA parallel execution completed successfully"
 fi

@@ -151,9 +151,9 @@ case ${task_id} in
     fi
     ;;
   graphics|misc)
-    "${HOMErrfs}/workflow/sideload/${task_id}.sh"
+    "${HOMErrfs}/workflow/sideload/${task_id}.sh" || exit $?
     ;;
   *)
-    "${HOMErrfs}/jobs/${COMMAND}"
+    "${HOMErrfs}/jobs/${COMMAND}" || exit $?
     ;;
 esac

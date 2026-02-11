@@ -100,7 +100,7 @@ if [[ -s filelist_mrms ]]; then
   echo "NSSL grib2 file levels = $numgrib2"
 else
   echo "FATAL ERROR: Not enough radar reflectivity files were found"
-  err_exit
+  source err_exit
 fi
 
 cat << EOF > namelist.mosaic
@@ -126,7 +126,7 @@ source prep_step
 ${MPI_RUN_CMD} ./${pgm}
 # check the status
 export err=$?
-err_chk
+err_chk || exit $err
 
 ${cpreq} RefInGSI3D.dat "${COMOUT}/nonvar_reflobs/${WGF}/RefInGSI3D.dat"
 

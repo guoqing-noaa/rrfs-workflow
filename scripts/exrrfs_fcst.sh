@@ -102,14 +102,14 @@ source prep_step
 ${cpreq} "${EXECrrfs}"/atmosphere_model.x .
 ${MPI_RUN_CMD} ./atmosphere_model.x 
 export err=$?
-err_chk
+err_chk || exit $err
 #
 # double check status as sometimes atmosphere_model.x exit with 0 but there are still errors (log.atmosphere*err)
 #
 num_err_log=$(find ./log.atmosphere*.err 2>/dev/null | wc -l)
 if (( "${num_err_log}" > 0 )) ; then
   echo "FATAL ERROR: MPAS model run failed"
-  err_exit
+  source err_exit
 else
   # spinup cycles copy f001 mpasout to com/ directly, don't need the save_for_next task
   if [[ "${DO_SPINUP:-FALSE}" == "TRUE" ]];  then

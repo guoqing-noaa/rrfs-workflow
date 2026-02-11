@@ -55,7 +55,7 @@ do
       cp "${dummyRAVE}" "${EMISFILE}"
     else
       echo "${dummyRAVE} not found, stop the workflow..."
-      err_exit
+      source err_exit
     fi
   fi
   ncks -O -6 "${EMISFILE}" "${EMISFILE}"

@@ -40,7 +40,7 @@ mkdir -p "${COMOUT}/nonvar_bufrobs/${WGF}"
 #----------------------------------------
 export pgmout="${DATA}/OUTPUT.$$"
 "${HOMErrfs}"/scripts/exrrfs_nonvar_bufrobs.sh
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 
 if [[ -e "${pgmout}" ]]; then
   cat "${pgmout}"
