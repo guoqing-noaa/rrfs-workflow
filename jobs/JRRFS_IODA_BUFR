@@ -40,7 +40,7 @@ mkdir -p "${COMOUT}/ioda_bufr/${WGF}"
 #----------------------------------------
 export pgmout="${DATA}/OUTPUT.$$"
 "${HOMErrfs}"/scripts/exrrfs_ioda_bufr.sh
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 
 if [[ -e "${pgmout}" ]]; then
   cat "${pgmout}"

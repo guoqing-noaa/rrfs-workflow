@@ -96,7 +96,7 @@ ${cpreq} "${EXECrrfs}/${pgm}" .
 source prep_step
 ${MPI_RUN_CMD} ./${pgm}
 export err=$?
-err_chk
+err_chk || exit $err
 
 # No need to copy output b/c ${initial_file} was linked from UMBRELLA_PREP_IC_DATA
 

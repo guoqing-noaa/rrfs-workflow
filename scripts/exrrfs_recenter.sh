@@ -49,7 +49,7 @@ elif [ -s "${controlfile_mpasout}" ] ; then
   controlfile="${controlfile_mpasout}"
 else
   echo "Cannot find control background: ${controlfile_init} or ${controlfile_mpasout}"
-  err_exit
+  source err_exit
 fi
 
 ln -sf "${controlfile}"  ./mpasout_control.nc
@@ -76,5 +76,5 @@ source prep_step
 ${MPI_RUN_CMD} ./${pgm} log.out
 # check the status
 export err=$?
-err_chk
+err_chk || exit $err
 #

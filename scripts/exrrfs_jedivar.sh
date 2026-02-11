@@ -132,7 +132,7 @@ case ${YAML_GEN_METHOD:-1} in
     ;;
   *)
     echo "unknown YAML_GEN_METHOD:${YAML_GEN_METHOD}"
-    err_exit
+    source err_exit
     ;;
 esac
 
@@ -147,7 +147,7 @@ if [[ ${start_type} == "warm" ]] || [[ ${start_type} == "cold" && ${COLDSTART_CY
   ${MPI_RUN_CMD} ./mpasjedi_variational.x jedivar.yaml log.out
   # check the status
   export err=$?
-  err_chk
+  err_chk || exit $err
   if [[ ${start_type} == "warm" ]] && [[ ${SNUDGETYPES} != "" ]]; then
       # pyioda libraries
       PYIODALIB=$(echo "$HOMErdasapp"/build/lib/python3.*)

@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+
+import yaml
+import sys
+
+def int_or_str(s):
+    try:
+        return int(s)
+    except ValueError:
+        return s
+
+
+def get_by_dot_path(data, path):
+    keys = path.split('.') if path else []
+    for key in keys:
+        key = int_or_str(key)
+        try:
+            data = data[key]
+        except (KeyError, IndexError, TypeError):
+            print(f"Error: Key or index '{key}' not found.")
+            sys.exit(1)
+    return data
+
+# Recursively flatten a list of arbitrary depth
+def flatten(lst):
+    for item in lst:
+        if isinstance(item, list):
+            yield from flatten(item)
+        else:
+            yield item
+
+if __name__ == "__main__":
+    with open(sys.argv[1]) as f:
+        data = yaml.safe_load(f)
+    path = sys.argv[2] if len(sys.argv) > 2 else ""
+    result = get_by_dot_path(data, path)
+    # Recursively flatten result if it is a list
+    if isinstance(result, list):
+        result = list(flatten(result))
+    if isinstance(result, list):
+        print('\n'.join(str(i) for i in result))
+    else:
+        print(result)

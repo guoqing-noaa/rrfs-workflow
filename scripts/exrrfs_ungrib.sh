@@ -52,14 +52,7 @@ for fhr in  ${fhr_all}; do
       source "${USHrrfs}"/ungrib_rrfs.sh # prepare "${GRIBFILE_LOCAL}"
     else
       echo "FATAL ERROR: ${GRIBFILE} missing"
-      err_exit
-    fi
-  elif [[ "${prefix}" == *RAP*  ]]; then
-    if [[ -s "${GRIBFILE}" ]]; then
-      source "${USHrrfs}"/ungrib_rap.sh # prepare "${GRIBFILE_LOCAL}"
-    else
-      echo "FATAL ERROR: ${GRIBFILE} missing"
-      err_exit
+      source err_exit
     fi
   elif [[ -s "${GRIBFILE}" ]]; then
     ${cpreq} "${GRIBFILE}"  "${GRIBFILE_LOCAL}"
@@ -76,7 +69,7 @@ for fhr in  ${fhr_all}; do
       source "${USHrrfs}"/gefs_interpolation.sh
     else
       echo "FATAL ERROR: ${GRIBFILE} missing and not eligible for time interpolation"
-      err_exit
+      source err_exit
     fi
   fi
 done
@@ -97,7 +90,7 @@ sed -e "s/@start_time@/${start_time}/" -e "s/@end_time@/${end_time}/" \
 source prep_step
 ${cpreq} "${EXECrrfs}/ungrib.x" .
 ./ungrib.x
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 #
 # check the status
 #
@@ -106,5 +99,5 @@ if [[ -s ${outfile} ]]; then
   mv "${prefix}":* "${UMBRELLA_UNGRIB_DATA}/"
 else
   echo "FATAL ERROR: ungrib failed"
-  err_exit
+  source err_exit
 fi

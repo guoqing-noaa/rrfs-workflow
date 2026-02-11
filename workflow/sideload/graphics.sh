@@ -38,4 +38,4 @@ export err=$?; err_chk
 # link results to ${COMOUT}
 ln -snf "${DATA}" "${COMOUT}"
 
-exit 0
+exit $?

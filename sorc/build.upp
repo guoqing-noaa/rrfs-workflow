@@ -5,8 +5,12 @@ date
 rundir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 HOMErrfs="$(dirname "$rundir")"
 
-source "${HOMErrfs}/workflow/tools/detect_machine.sh"
-source "${HOMErrfs}/workflow/tools/init.sh"
+# Get environment config path
+rrfs_config_file="${1:-}"
+if [[ -n "${rrfs_config_file}" ]]; then
+    config_path="$( cd "$( dirname "${rrfs_config_file}" )" &> /dev/null && pwd )"
+    rrfs_config_file="${config_path}/$(basename "${rrfs_config_file}")"
+fi
 
 EXEC="${HOMErrfs}/sorc/UPP/exec/upp.x"
 
@@ -15,7 +19,33 @@ rm -rf "${HOMErrfs}/sorc/UPP/tests/install"
 rm -rf "${EXEC}"
 
 cd "${HOMErrfs}/sorc/UPP/tests" || exit 1
-./compile_upp.sh
+
+if [[ -z "${rrfs_config_file}" ]]; then
+    # Use unportable configuration and build method
+    source "${HOMErrfs}/workflow/tools/detect_machine.sh"
+    source "${HOMErrfs}/workflow/tools/init.sh"
+
+    ./compile_upp.sh
+else
+    # Use portable configuration and build method
+
+    # Get fix files location from config
+    set +x
+    source "${HOMErrfs}/workflow/tools/configure.sh" "${rrfs_config_file}" "fix" || exit 1
+    module list
+    set -x
+
+    # Set up RRFS FIX file path
+    source "${HOMErrfs}/workflow/tools/portable_init.sh"
+
+    # Copy portable build scripts to UPP
+    cp "${HOMErrfs}/sorc/_workaround_/UPP/tests/compile_upp.sh" "${HOMErrfs}/sorc/UPP/tests/compile_upp.sh"
+    cp "${HOMErrfs}/sorc/_workaround_/UPP/tests/configure.sh" "${HOMErrfs}/sorc/UPP/tests/configure.sh"
+    cp "${HOMErrfs}/sorc/_workaround_/UPP/tests/readyaml" "${HOMErrfs}/sorc/UPP/tests/readyaml"
+
+    ./compile_upp.sh -y "${rrfs_config_file}"
+fi
+
 
 mkdir -p "${HOMErrfs}/exec"
 echo "copy ${EXEC} to ../exec/upp.x"

@@ -49,7 +49,7 @@ ${cpreq} "${EXECrrfs}/${pgm}" .
 source prep_step
 ${MPI_RUN_CMD} ./${pgm}
 export err=$?
-err_chk
+err_chk || exit $err
 
 ${cpreq} NASALaRC_cloud4mpas.bin "${COMOUT}/nonvar_bufrobs/${WGF}/NASALaRC_cloud4mpas.bin"
 
@@ -84,7 +84,7 @@ ${cpreq} "${EXECrrfs}/${pgm}" .
 source prep_step
 ${MPI_RUN_CMD} ./${pgm}
 export err=$?
-err_chk
+err_chk || exit $err
 
 ${cpreq} LightningInMPAS.dat "${COMOUT}/nonvar_bufrobs/${WGF}/LightningInMPAS.dat"
 
@@ -117,7 +117,7 @@ ${cpreq} "${EXECrrfs}/${pgm}" .
 source prep_step
 ${MPI_RUN_CMD} ./${pgm}
 export err=$?
-err_chk
+err_chk || exit $err
 
 ${cpreq} mpas_metarcloud.bin "${COMOUT}/nonvar_bufrobs/${WGF}/mpas_metarcloud.bin"
 

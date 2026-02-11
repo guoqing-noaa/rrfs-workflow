@@ -4,35 +4,62 @@ set -x
 date
 rundir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 HOMErrfs="$(dirname "$rundir")"
-COMPILER=${COMPILER:-intel}
 
-source "${HOMErrfs}/workflow/tools/detect_machine.sh"
-source "${HOMErrfs}/workflow/tools/init.sh"
+# Get environment config path
+rrfs_config_file="${1:-}"
+if [[ -n "${rrfs_config_file}" ]]; then
+    config_path="$( cd "$( dirname "${rrfs_config_file}" )" &> /dev/null && pwd )"
+    rrfs_config_file="${config_path}/$(basename "${rrfs_config_file}")"
+fi
 
 EXEC="${HOMErrfs}/sorc/MPAS-Model/init_atmosphere_model"
 EXEC2="${HOMErrfs}/sorc/MPAS-Model/atmosphere_model"
 
-compiler_str="intel-mpi"
-case "${MACHINE}" in
-  wcoss2)
-    BUILD_VERSION_FILE="${HOMErrfs}/versions/build.ver"
-    if [[ -f "${BUILD_VERSION_FILE}" ]]; then
-      source "${BUILD_VERSION_FILE}"
-    fi
-    compiler_str="ftn-wcoss2"
-    ;;
-  ursa|orion|hercules|jet|hera)
-    compiler_str="intel-mpi-ursa"
-    ;;
-  gaeac6|derecho)
-    compiler_str="ifort_icx"
-    ;;
-esac
+if [[ -z "${rrfs_config_file}" ]]; then
+  # Use unportable configuration and build method
 
-module purge                      
-module use "${HOMErrfs}/modulefiles"
-module load "rrfs/${MACHINE}.${COMPILER}"
-module list
+  source "${HOMErrfs}/workflow/tools/detect_machine.sh"
+  source "${HOMErrfs}/workflow/tools/init.sh"
+
+  compiler_str="intel-mpi"
+  case "${MACHINE}" in
+    wcoss2)
+      BUILD_VERSION_FILE="${HOMErrfs}/versions/build.ver"
+      if [[ -f "${BUILD_VERSION_FILE}" ]]; then
+        source "${BUILD_VERSION_FILE}"
+      fi
+      compiler_str="ftn-wcoss2"
+      ;;
+    ursa|orion|hercules|jet|hera)
+      compiler_str="intel-mpi-ursa"
+      ;;
+    gaeac6|derecho)
+      compiler_str="ifort_icx"
+      ;;
+  esac
+
+  module purge
+  module use "${HOMErrfs}/modulefiles"
+  module load "rrfs/${MACHINE}.${COMPILER}"
+  module list
+
+else
+  # Use portable configuration and build method
+
+  # Set up the environment
+  set +x
+  source "${HOMErrfs}/workflow/tools/configure.sh" "${rrfs_config_file}" "mpas" || exit 1
+  module list
+  set -x
+
+  # Set up RRFS FIX file path
+  source "${HOMErrfs}/workflow/tools/portable_init.sh"
+
+  compiler_str="${mpas_build_target:-intel-mpi}"
+
+fi
+
+echo "compiling MPAS-Model with target: ${compiler_str}"
 
 cd "${HOMErrfs}/sorc/MPAS-Model" || exit 1
 make clean CORE=init_atmosphere

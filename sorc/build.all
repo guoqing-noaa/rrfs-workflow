@@ -2,6 +2,14 @@
 rundir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 HOMErrfs="$(dirname "$rundir")"
 
+usage() {
+  echo "Usage: $0 [<config_file>] [chem] [noda]"
+  echo "  <config_file> - Path to the RRFS configuration YAML file. Default is 'config/config.yaml'."
+  echo "  chem - Build MPAS-Model with chemistry support."
+  echo "  noda - Skip building RDAS component."
+  exit 1
+}
+
 # kill the whole build process if Ctrl+C is entered
 # shellcheck disable=SC2317
 cleanup() {
@@ -11,7 +19,32 @@ cleanup() {
 }
 trap cleanup SIGINT SIGTERM
 
-if [[ "${1,,}" == "chem" ]] || [[ "${2,,}" == "chem" ]]; then
+# Set default options
+da="on"
+chem="off"
+rrfs_config_file=""
+
+# Parse command line arguments
+if [ "$#" -gt 3 ]; then
+  usage
+  exit 1
+fi
+for arg in "$@"; do
+  lower_arg=$(echo "$arg" | tr '[:upper:]' '[:lower:]')
+  if [[ "$lower_arg" == "chem" ]]; then
+    # handle chem option
+    chem="on"
+  elif [[ "$lower_arg" == "noda" ]]; then
+    # handle noda option
+    da="off"
+  else
+    # Handle config relative or absolute path
+    config_path="$( cd "$( dirname "${arg}" )" &> /dev/null && pwd )"
+    rrfs_config_file=${config_path}/$(basename "$arg")
+  fi
+done
+
+if [[ "${chem}" == "on" ]]; then
   cd "${HOMErrfs}/sorc" || exit 1
   echo "Option 'chem' found in the command line, downloading chem-specific MPAS-Model ......"
   remote_url="https://github.com/cheMPAS-Fire/MPAS-Model"
@@ -27,15 +60,17 @@ fi
 cd "${HOMErrfs}/sorc" || exit 1
 
 echo "building all components, it may take more than one hour..."
-./build.wps  &> ./log.build.wps  2>&1 &
-./build.mpas &> ./log.build.mpas 2>&1 &
-./build.upp  &> ./log.build.upp  2>&1 &
-./build.mpassit  &> ./log.build.mpassit  2>&1 &
-./build.utils  &> ./log.build.utils  2>&1 &
-./build.rank_run  &> ./log.build.rank_run  2>&1 &
+./build.wps ${rrfs_config_file} &> ./log.build.wps  2>&1 &
+./build.mpas_cmake ${rrfs_config_file} &> ./log.build.mpas 2>&1 &
+./build.upp ${rrfs_config_file} &> ./log.build.upp  2>&1 &
+./build.mpassit ${rrfs_config_file} &> ./log.build.mpassit  2>&1 &
+./build.utils ${rrfs_config_file} &> ./log.build.utils  2>&1 &
+./build.rank_run ${rrfs_config_file} &> ./log.build.rank_run  2>&1 &
 
-if [[ "${1,,}" != "noda" ]] && [[ "${2,,}" != "noda" ]]; then
-  ./build.rdas &> ./log.build.rdas 2>&1 &
+if [[ "${da}" == "on" ]]; then
+  ./build.rdas ${rrfs_config_file} &> ./log.build.rdas 2>&1 &
+else
+  echo "Option 'noda' found in the command line, skipping RDAS build."
 fi
 
 wait

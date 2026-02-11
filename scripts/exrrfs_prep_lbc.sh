@@ -48,6 +48,6 @@ if [ -r "${checkfile}" ]; then
   done
 else
   echo "Cannot find boundary file: ${checkfile}"
-  err_exit
+  source err_exit
 fi
 

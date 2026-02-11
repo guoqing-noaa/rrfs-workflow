@@ -4,12 +4,42 @@ date
 rundir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 HOMErrfs="$(dirname "$rundir")"
 
-source "${HOMErrfs}"/workflow/tools/detect_machine.sh
-source "${HOMErrfs}"/workflow/tools/init.sh
+# Get environment config path
+rrfs_config_file="${1:-}"
+if [[ -n "${rrfs_config_file}" ]]; then
+    config_path="$( cd "$( dirname "${rrfs_config_file}" )" &> /dev/null && pwd )"
+    rrfs_config_file="${config_path}/$(basename "${rrfs_config_file}")"
+fi
 
 cd "${HOMErrfs}/sorc/RRFS_UTILS" || exit
 rm -rf build/
-./build.sh
+
+if [[ -z "${rrfs_config_file}" ]]; then
+    # Use unportable configuration and build method
+    source "${HOMErrfs}/workflow/tools/detect_machine.sh"
+    source "${HOMErrfs}/workflow/tools/init.sh"
+
+    ./build.sh
+else
+    # Use portable configuration and build method
+
+    # Get fix files location from config
+    set +x
+    source "${HOMErrfs}/workflow/tools/configure.sh" "${rrfs_config_file}" "fix" || exit 1
+    module list
+    set -x
+
+    # Set up RRFS FIX file path
+    source "${HOMErrfs}/workflow/tools/portable_init.sh"
+
+    # Copy portable build scripts to RRFS_UTILS
+    cp "${HOMErrfs}/sorc/_workaround_/RRFS_UTILS/build.sh" "${HOMErrfs}/sorc/RRFS_UTILS/build.sh"
+    cp "${HOMErrfs}/sorc/_workaround_/RRFS_UTILS/configure.sh" "${HOMErrfs}/sorc/RRFS_UTILS/configure.sh"
+    cp "${HOMErrfs}/sorc/_workaround_/RRFS_UTILS/readyaml" "${HOMErrfs}/sorc/RRFS_UTILS/readyaml"
+
+    ./build.sh "${rrfs_config_file}"
+fi
+
 
 mkdir -p "${HOMErrfs}/exec"
 EXEC="${HOMErrfs}/sorc/RRFS_UTILS/build/bin/gen_ensmean_recenter.exe"

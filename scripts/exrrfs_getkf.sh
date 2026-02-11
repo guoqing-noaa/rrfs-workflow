@@ -47,8 +47,8 @@ else
   initial_file='mpasout.nc'
 fi
 # if cold_start or not do_radar_ref, remove refl10cm and w from stream_list.atmosphere.analysis
-if [[ "${start_type}" == "cold"  ]] || ! ${DO_RADAR_REF} ; then
-  sed -i '$d;N;$d' stream_list/stream_list.atmosphere.analysis
+if [[ "${start_type}" == "cold"  ]] || [[ ${DO_RADAR_REF} == "FALSE" ]]; then
+  sed -i '$d;N;$d' ../stream_list/stream_list.atmosphere.analysis
 fi
 # link ensembles to data/ens/
 for i in $(seq -w 001 "${ENS_SIZE}"); do
@@ -98,7 +98,7 @@ case ${YAML_GEN_METHOD:-1} in
     ;;
   *)
     echo "unknown YAML_GEN_METHOD:${YAML_GEN_METHOD}"
-    err_exit
+    source err_exit
     ;;
 esac
 
@@ -112,7 +112,7 @@ if [[ ${start_type} == "warm" ]] || [[ ${start_type} == "cold" && ${COLDSTART_CY
   ${MPI_RUN_CMD} ./mpasjedi_enkf.x getkf.yaml log.out
   # check the status
   export err=$?
-  err_chk
+  err_chk || exit $err
   #
   cp "${DATA}"/getkf*.yaml "${COMOUT}/getkf_${GETKF_TYPE}/${WGF}"
   cp "${DATA}"/log.* "${COMOUT}/getkf_${GETKF_TYPE}/${WGF}"
@@ -137,7 +137,7 @@ if [[ ${start_type} == "warm" ]] || [[ ${start_type} == "cold" && ${COLDSTART_CY
 
   # Save analysis files if requested
   if [[ "${GETKF_TYPE}" == "post" && "${SAVE_GETKF_ANL^^}" == "TRUE" ]]; then
-    for mem in $(seq -w 1 030); do
+    for mem in $(seq -w 001 "${ENS_SIZE}"); do
       cp -rL "${DATA}"/data/ens/mem"${mem}".nc "${COMOUT}"/getkf_"${GETKF_TYPE}"/"${WGF}"/mem"${mem}".nc
     done
   fi

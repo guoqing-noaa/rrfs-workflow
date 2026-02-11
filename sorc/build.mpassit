@@ -5,9 +5,12 @@ date
 rundir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 HOMErrfs="$(dirname "$rundir")"
 
-module purge
-source "${HOMErrfs}/workflow/tools/detect_machine.sh"
-source "${HOMErrfs}/workflow/tools/init.sh"
+# Get environment config path
+rrfs_config_file="${1:-}"
+if [[ -n "${rrfs_config_file}" ]]; then
+    config_path="$( cd "$( dirname "${rrfs_config_file}" )" &> /dev/null && pwd )"
+    rrfs_config_file="${config_path}/$(basename "${rrfs_config_file}")"
+fi
 
 EXEC="${HOMErrfs}/sorc/MPASSIT/bin/mpassit"
 
@@ -15,7 +18,33 @@ rm -rf "${HOMErrfs}/sorc/MPASSIT/build"
 rm -rf "${HOMErrfs}/sorc/MPASSIT/bin"
 
 cd "${HOMErrfs}/sorc/MPASSIT" || exit 1
-./build.sh
+
+if [[ -z "${rrfs_config_file}" ]]; then
+    # Use unportable configuration and build method
+    source "${HOMErrfs}/workflow/tools/detect_machine.sh"
+    source "${HOMErrfs}/workflow/tools/init.sh"
+
+    ./build.sh
+else
+    # Use portable configuration and build method
+
+    # Get fix files location from config
+    set +x
+    source "${HOMErrfs}/workflow/tools/configure.sh" "${rrfs_config_file}" "fix" || exit 1
+    module list
+    set -x
+
+    # Set up RRFS FIX file path
+    source "${HOMErrfs}/workflow/tools/portable_init.sh"
+
+    # Copy portable build scripts to MPASSIT submodule
+    cp "${HOMErrfs}/sorc/_workaround_/MPASSIT/build.sh" "${HOMErrfs}/sorc/MPASSIT/build.sh"
+    cp "${HOMErrfs}/sorc/_workaround_/MPASSIT/configure.sh" "${HOMErrfs}/sorc/MPASSIT/configure.sh"
+    cp "${HOMErrfs}/sorc/_workaround_/MPASSIT/readyaml" "${HOMErrfs}/sorc/MPASSIT/readyaml"
+
+    ./build.sh -y "${rrfs_config_file}"
+fi
+
 
 mkdir -p "${HOMErrfs}/exec"
 echo "copy ${EXEC} to ../exec/mpassit.x"

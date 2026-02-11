@@ -42,7 +42,7 @@ if [[ "${start_type}" == "cold" ]]; then
     echo "cold start from ${thisfile}"
   else
     echo "FATAL ERROR: PREP_IC failed, cannot find cold start file: ${thisfile}"
-    err_exit
+    source err_exit
   fi
 elif [[ "${start_type}" == "warm" ]]; then
   thisfile="undefined"
@@ -71,11 +71,11 @@ elif [[ "${start_type}" == "warm" ]]; then
     echo "warm start from ${thisfile}"
   else
     echo "FATAL ERROR: PREP_IC failed, cannot find warm start file: ${thisfile}"
-    err_exit
+    source err_exit
   fi
 else
   echo "FATAL ERROR: PREP_IC failed, start type is not defined"
-  err_exit
+  source err_exit
 fi
 
 #

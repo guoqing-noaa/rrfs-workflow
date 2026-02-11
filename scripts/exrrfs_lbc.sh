@@ -85,10 +85,10 @@ ln -snf "${FIXrrfs}/physics/${PHYSICS_SUITE}/QNWFA_QNIFA_SIGMA_MONTHLY.dat" .
 source prep_step
 ${cpreq} "${EXECrrfs}"/init_atmosphere_model.x .
 ${MPI_RUN_CMD} ./init_atmosphere_model.x
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 if ! ls ./lbc*.nc; then
   echo "FATAL ERROR: failed to generate lbc files"
-  err_exit
+  source err_exit
 fi
 
 # INFO: chem_lbc_update is unnecessary for smoke/dust w/ RAP/RRFS, but may be necessary for future mixed-model cases

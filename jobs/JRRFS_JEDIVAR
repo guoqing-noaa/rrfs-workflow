@@ -47,7 +47,7 @@ mkdir -p "${COMOUT}/jedivar/${WGF}"
 #----------------------------------------
 export pgmout="${DATA}/OUTPUT.$$"
 "${HOMErrfs}"/scripts/exrrfs_jedivar.sh
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 
 if [[ -e "${pgmout}" ]]; then
   cat "${pgmout}"

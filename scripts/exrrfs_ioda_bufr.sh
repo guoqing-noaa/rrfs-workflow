@@ -64,7 +64,7 @@ done
 ${cpreq} "${FIXrrfs}/jedi/atms_beamwidth.txt" .
 ${cpreq} "${PARMrrfs}/bufr_atms_mapping.yaml" .
 input_file="atmsbufr"
-output_file="ioda.atms_{splits/satId}.nc"
+output_file="ioda_atms_{splits/satId}.nc"
 yaml="bufr_atms_mapping.yaml"
 if [[ -f "$input_file" ]]; then
   ./bufr2netcdf.x "$input_file" "$yaml" "$output_file"
@@ -156,5 +156,5 @@ if ls ./ioda*nc; then
   ${cpreq} "${DATA}"/ioda*.nc "${COMOUT}/ioda_bufr/${WGF}"
 else
   echo "FATAL ERROR: no ioda files generated."
-  err_exit # err_exit if no ioda files generated at the development stage
+  source err_exit # err_exit if no ioda files generated at the development stage
 fi

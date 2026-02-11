@@ -62,10 +62,10 @@ ln -snf "${FIXrrfs}/physics/${PHYSICS_SUITE}/QNWFA_QNIFA_SIGMA_MONTHLY.dat" .
 source prep_step
 ${cpreq} "${EXECrrfs}/init_atmosphere_model.x" .
 ${MPI_RUN_CMD} ./init_atmosphere_model.x
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 if [[ ! -s './init.nc' ]]; then
   echo "FATAL ERROR: failed to generate init.nc"
-  err_exit
+  source err_exit
 fi
 
 # add/update chemistry species to init.nc

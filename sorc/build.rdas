@@ -5,23 +5,41 @@ date
 rundir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 HOMErrfs="$(dirname "$rundir")"
 
-source "${HOMErrfs}/workflow/tools/detect_machine.sh"
-source "${HOMErrfs}/workflow/tools/init.sh"
+usage() {
+  echo "Usage: $0 [<config_file>] [different_mpas]"
+  echo "  <config_file> - Path to the RRFS configuration YAML file. Default is 'config/config.yaml'."
+  echo "  different_mpas - Build RDAS with its own MPAS-Model ."
+  exit 1
+}
 
-#if [[ "${MACHINE}" == "derecho" ]]; then
-#  #export GFORTRAN_CONVERT_UNIT='big_endian:101-200'
-#  #export LMOD_TMOD_FIND_FIRST=yes
-#  export COMPILER=gnu
-#fi
+# Get environment config path
+rrfs_config_file=""
+
+# Set default options
+use_same_mpas="yes"
+
+# Parse command line arguments
+if [ "$#" -gt 2 ]; then
+  usage
+  exit 1
+fi
+for arg in "$@"; do
+  lower_arg=$(echo "$arg" | tr '[:upper:]' '[:lower:]')
+  if [[ "$lower_arg" == "different_mpas" ]]; then
+    # handle different_mpas option
+    use_same_mpas="no"
+  else
+    rrfs_config_file="$arg"
+    if [[ -n "${rrfs_config_file}" ]]; then
+        config_path="$( cd "$( dirname "${rrfs_config_file}" )" &> /dev/null && pwd )"
+        rrfs_config_file="${config_path}/$(basename "${rrfs_config_file}")"
+    fi
+  fi
+done
 
 # get a clean copy of the same MPAS-Model as in the workflow
 # if RDASApp has a different version from the workflow
 # and users don't specify 'different_mpas' at the command line
-if [[ "$1" == "different_mpas" ]]; then
-  use_same_mpas=no
-else
-  use_same_mpas=yes
-fi
 cd "${HOMErrfs}/sorc/MPAS-Model" || exit 1
 remote_url=$(git remote get-url origin)
 hash_workflow=$(git rev-parse HEAD)
@@ -64,7 +82,31 @@ cp ../_workaround_/RDASApp/saber/GSIParameters.h sorc/saber/src/saber/gsi/utils/
 cp ../_workaround_/RDASApp/saber/Geometry.cc sorc/saber/src/saber/interpolation/Geometry.cc
 
 rm -rf build/
-./build.sh -m MPAS -t NO -w NO -b NO
+if [[ -z "${rrfs_config_file}" ]]; then
+  # Use unportable configuration and build method
+  source "${HOMErrfs}/workflow/tools/detect_machine.sh"
+  source "${HOMErrfs}/workflow/tools/init.sh"
+  ./build.sh -m MPAS -t NO -w NO -b NO
+else
+  # Use portable configuration and build method
+
+  # Get fix files location from config
+  set +x
+  source "${HOMErrfs}/workflow/tools/configure.sh" "${rrfs_config_file}" "fix" || exit 1
+  module list
+  set -x
+
+  # Set up RRFS FIX file path
+  source "${HOMErrfs}/workflow/tools/portable_init.sh"
+
+  # Copy portable build scripts to RDASApp
+  cp "${HOMErrfs}/sorc/_workaround_/RDASApp/build.sh" "${HOMErrfs}/sorc/RDASApp/build.sh"
+  cp "${HOMErrfs}/sorc/_workaround_/RDASApp/ush/configure.sh" "${HOMErrfs}/sorc/RDASApp/ush/configure.sh"
+  cp "${HOMErrfs}/sorc/_workaround_/RDASApp/ush/readyaml" "${HOMErrfs}/sorc/RDASApp/ush/readyaml"
+  cp "${HOMErrfs}/sorc/_workaround_/RDASApp/ush/portable_init.sh" "${HOMErrfs}/sorc/RDASApp/ush/portable_init.sh"
+  ./build.sh -m MPAS -t NO -w NO -b NO -y "${rrfs_config_file}"
+fi
+
 
 mkdir -p "${HOMErrfs}/exec"
 echo "copy ${EXEC} to ../exec/mpasjedi_variational.x"

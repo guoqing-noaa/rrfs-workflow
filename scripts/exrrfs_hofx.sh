@@ -85,7 +85,7 @@ for fhr in "${hofx_array[@]}"; do
   ${MPI_RUN_CMD} ./mpasjedi_hofx3d.x hofx.yaml log.out
   # check the status
   export err=$?
-  err_chk
+  err_chk || exit $err
 
   # copy jdiag files to COMOUT and others
   rm -f data/obs/*

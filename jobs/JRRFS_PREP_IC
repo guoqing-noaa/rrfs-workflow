@@ -50,7 +50,7 @@ mkdir -p "${COMOUT}/prep_ic/${WGF}${MEMDIR}"
 #----------------------------------------
 export pgmout="${DATA}/OUTPUT.$$"
 "${HOMErrfs}"/scripts/exrrfs_prep_ic.sh
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 
 if [[ -e "${pgmout}" ]]; then
   cat "${pgmout}"

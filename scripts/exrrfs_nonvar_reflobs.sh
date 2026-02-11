@@ -63,9 +63,11 @@ for (( j=0; j < 4; $((j=j+1)) )); do
   s=0
   while (( s <= 59 )); do
     ss=$(printf %2.2i ${s})
-    nsslfile="${NSSL}/${mrms}_00.50_${YYYY}${MM}${DD}-${HH}${min}${ss}.${obs_appendix}"
-    if [[ -s ${nsslfile} ]]; then
-      echo "Found ${nsslfile}"
+    nsslfile_short="${NSSL}/${mrms}_00.50_${YYYY}${MM}${DD}-${HH}${min}${ss}.${obs_appendix}"
+    nsslfile_long="${NSSL}/${YYYY}${MM}${DD}-${HH}${min}${ss}.MRMS_${mrms}_00.50_${YYYY}${MM}${DD}-${HH}${min}${ss}.${obs_appendix}"
+    if [[ -s ${nsslfile_short} || -s ${nsslfile_long} ]]; then
+      echo "Found ${nsslfile_short}"
+      echo "or ${nsslfile_long}"
       nsslfile1="*${mrms}_*_${YYYY}${MM}${DD}-${HH}${min}*.${obs_appendix}"
       numgrib2=$(find ${NSSL}/${nsslfile1} -maxdepth 1 -type f | wc -l)
       echo "Number of GRIB-2 files: ${numgrib2}"
@@ -100,7 +102,7 @@ if [[ -s filelist_mrms ]]; then
   echo "NSSL grib2 file levels = $numgrib2"
 else
   echo "FATAL ERROR: Not enough radar reflectivity files were found"
-  err_exit
+  source err_exit
 fi
 
 cat << EOF > namelist.mosaic
@@ -126,7 +128,7 @@ source prep_step
 ${MPI_RUN_CMD} ./${pgm}
 # check the status
 export err=$?
-err_chk
+err_chk || exit $err
 
 ${cpreq} RefInGSI3D.dat "${COMOUT}/nonvar_reflobs/${WGF}/RefInGSI3D.dat"
 

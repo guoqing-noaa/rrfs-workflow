@@ -77,10 +77,10 @@ for (( ii=0; ii<"${num_fhrs}"; ii=ii+"${group_total_num}" )); do
         mv namelist.mpassit "namelist.mpassit_${fhr}"
       else
         echo "FATAL ERROR: failed to genereate mpassit.${timestr}.nc"
-        err_exit
+        source err_exit
       fi
     else
       echo "FATAL ERROR: cannot find history file at ${timestr}"
-      err_exit
+      source err_exit
     fi
 done

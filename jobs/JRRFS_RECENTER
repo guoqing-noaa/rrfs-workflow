@@ -43,7 +43,7 @@ mkdir -p "${COMOUT}/recenter/${WGF}"
 #----------------------------------------
 export pgmout="${DATA}/OUTPUT.$$"
 "${HOMErrfs}"/scripts/exrrfs_recenter.sh
-export err=$?; err_chk
+export err=$?; err_chk || exit $err
 
 if [ -e "$pgmout" ]; then
   cat "$pgmout"
