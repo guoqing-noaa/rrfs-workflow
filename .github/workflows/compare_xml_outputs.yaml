@@ -30,7 +30,6 @@ jobs:
       - name: Install dependencies (optional)
         run: |
           pip install -r pr_branch/tests/pip_requirements.txt || true
-          pip install -r base_branch/pip_requirements.txt || true
 
       - name: Run tests in base branch
         run: |
