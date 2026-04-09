@@ -53,12 +53,12 @@ jobs:
             pr_file="pr_branch/$rel_path"
 
             if [ -f "$pr_file" ]; then
-              diff -u -I "ENTITY HOMErrfs"  "$file" "$pr_file" > "diff_output/$(basename $file).diff"
-              if (( $? == 0 )); then
-                rm -rf "diff_output/$(basename $file).diff"
-              else
-                 has_diff=1
-              fi
+	      diff -u -I "ENTITY HOMErrfs" "$file" "$pr_file" > "diff_output/$(basename $file).diff" || true
+	      if [ -s "diff_output/$(basename $file).diff" ]; then
+		has_diff=1
+	      else
+		rm -f "diff_output/$(basename $file).diff"
+	      fi
             else
               echo "Missing in PR: $rel_path" >> diff_output/missing_files.diff
               has_diff=1
