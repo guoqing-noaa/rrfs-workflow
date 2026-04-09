@@ -1,8 +1,8 @@
 name: Compare XML outputs
 
 on:
-  # pull_request:
-  workflow_dispatch:
+  pull_request:
+  # workflow_dispatch:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
