@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Aloha! This file is to setup some top level experiment options
-#
+# fake change
 export NET=rrfs                    # rrfs, rtma, 
 export MESH_NAME=conus12km         # conus12km, conus3km, na12km, etc
 export WGF="det"   # working group function = "det", "enkf", "ens", "firewx"
