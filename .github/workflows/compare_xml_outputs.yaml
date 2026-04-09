@@ -4,6 +4,11 @@ on:
   # workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'workflow/**'
+    paths-ignore:
+      - 'workflow/sideload/**'
+      - 'workflow/tools/**'
 
 jobs:
   compare-XML-outputs:
@@ -87,7 +92,7 @@ jobs:
         run: |
           echo "!!! XML outputs have changed in the PR branch !!!"
           echo "Check the differences in the 'Echo diffs' section,"
-          echo "Or download the zip file from the "Upload diff artifact" section to inspect them locally."
+          echo "Or download the zipped artifact from the 'Upload diff artifact' section to inspect them locally."
 
           ignore_number=$(head -n 1 pr_branch/tests/.ignore.compare_xml_outputs)
           if (( ignore_number == PR_NUMBER )); then
