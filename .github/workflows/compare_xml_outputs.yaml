@@ -5,10 +5,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
-      - 'workflow/**'
-    paths-ignore:
-      - 'workflow/sideload/**'
-      - 'workflow/tools/**'
+      - 'workflow/setup_rocoto.py'
+      - 'workflow/config_resources/**'
+      - 'workflow/exp/**'
+      - 'workflow/rocoto_funcs/**'
 
 jobs:
   compare-XML-outputs:
