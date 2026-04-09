@@ -1,8 +1,8 @@
 name: Compare XML outputs
 
 on:
-  pull_request:
   # workflow_dispatch:
+  pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
       - name: Compare XML outputs
         id: diff
         run: |
-          mkdir diff_output
+          mkdir -p diff_output
 
           has_diff=0
 
@@ -52,13 +52,14 @@ jobs:
             rel_path=${file#base_branch/}
             pr_file="pr_branch/$rel_path"
 
+            diff_output_file="diff_output/${basename $file}.diff"
             if [ -f "$pr_file" ]; then
-	      diff -u -I "ENTITY HOMErrfs" "$file" "$pr_file" > "diff_output/$(basename $file).diff" || true
-	      if [ -s "diff_output/$(basename $file).diff" ]; then
-		has_diff=1
-	      else
-		rm -f "diff_output/$(basename $file).diff"
-	      fi
+              diff -u -I "ENTITY HOMErrfs" "$file" "$pr_file" > "$diff_output_file" || true
+              if [ -s "$diff_output_file" ]; then
+                has_diff=1
+              else
+                rm -f "$diff_output_file"
+              fi
             else
               echo "Missing in PR: $rel_path" >> diff_output/missing_files.diff
               has_diff=1
