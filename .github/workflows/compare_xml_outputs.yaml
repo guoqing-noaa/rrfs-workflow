@@ -52,7 +52,7 @@ jobs:
             rel_path=${file#base_branch/}
             pr_file="pr_branch/$rel_path"
 
-            diff_output_file="diff_output/${basename $file}.diff"
+            diff_output_file="diff_output/$(basename $file).diff"
             if [ -f "$pr_file" ]; then
               diff -u -I "ENTITY HOMErrfs" "$file" "$pr_file" > "$diff_output_file" || true
               if [ -s "$diff_output_file" ]; then
