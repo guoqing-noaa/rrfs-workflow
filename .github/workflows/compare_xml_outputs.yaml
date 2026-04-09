@@ -78,26 +78,14 @@ jobs:
           name: xml-diffs
           path: diff_output/
 
-      - name: Check override
-        id: check_override
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          override_found=0
-          comments=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments")
-          override_found=$(echo "$comments" | jq '[.[] | select(.user.login=="guoqing-noaa" or .user.login=="MatthewPyle-NOAA") | .body] | map(select(test("compare-XML-outputs=ignore"))) | length')
-          if [ "$override_found" -gt 0 ]; then
-            echo "'compare-XML-outputs=ignore' found, allow override"
-          fi
-          echo "override=$override_found" >> $GITHUB_OUTPUT
-
       - name: fail if diffs exist
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         if: steps.diff.outputs.has_diff == '1'
         run: |
-          if [ "${{ steps.check_override.outputs.override }}" = "1" ]; then
-            echo "Override detected: ignoring XML diffs."
+          ignore_number=$(head -n 1 pr_branch/tests/.ignore.compare_xml_outputs)
+          if (( ignore_number == PR_NUMBER )); then
+            echo "ignore_number == PR_NUMBER ($ignore_number == $PR_NUMBER), so ignore XML diffs"
             exit 0
           fi
           echo "!!! XML outputs have changed in the PR branch !!!"
