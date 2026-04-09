@@ -1,22 +1,31 @@
-#!/usr/bin/env python
+#!/usr/bin/env bash
 # shellcheck disable=SC1091
-run_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-wflow="${run_dir}/../workflow"
+rundir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+wflow="${rundir}/../workflow"
 cd "${wflow}" || exit 1
+mkdir -p "${rundir}/xml"
 
 # conus12km
-exp=conus12km
-expfile=${wflow}/exp/exp.${exp}
-sed -i 's|^export OPSROOT=/scratch3/BMC/wrfruc/gge/OPSROOT/${EXP_NAME}|export OPSROOT=./${EXP_NAME}|' "${expfile}"
-./setup_rocoto.py "${expfile}"
-mv "hrly_12km/rrfsdet/rrfs.xml" "${rundir}/xml/${exp}.xml"
+myexp=conus12km
+myfile=${wflow}/exp/exp.${myexp}
+sed 's|^export OPSROOT=/scratch3/BMC/wrfruc/gge/OPSROOT/${EXP_NAME}|export OPSROOT=./OPSROOT/${EXP_NAME}|' "${myfile}" > "exp.test"
+./setup_rocoto.py "exp.test"
+mv "OPSROOT/hrly_12km/exp/rrfsdet/rrfs.xml" "${rundir}/xml/${myexp}_retro.xml"
+
+{ cat "exp.test"; echo -e 'export REALTIME=true'; } > exp.tmp
+./setup_rocoto.py exp.tmp
+mv "OPSROOT/hrly_12km/exp/rrfsdet/rrfs.xml" "${rundir}/xml/${myexp}_rt.xml"
 
 # ens_conus12km
-exp=ens_conus12km
-expfile=${wflow}/exp/exp.${exp}
-sed -i 's|^export OPSROOT=/scratch3/BMC/wrfruc/gge/OPSROOT/${EXP_NAME}|export OPSROOT=./${EXP_NAME}|' "${expfile}"
-./setup_rocoto.py "${expfile}"
-mv "hrly_12km/rrfsenkf/rrfs.xml" "${rundir}/xml/${exp}.xml"
+myexp=ens_conus12km
+myfile=${wflow}/exp/exp.${myexp}
+sed 's|^export OPSROOT=/scratch3/BMC/wrfruc/gge/OPSROOT/${EXP_NAME}|export OPSROOT=./OPSROOT/${EXP_NAME}|' "${myfile}" > "exp.test"
+./setup_rocoto.py "exp.test"
+mv "OPSROOT/hrly_12km/exp/rrfsenkf/rrfs.xml" "${rundir}/xml/${myexp}_retro.xml"
+
+{ cat "exp.test"; echo -e 'export REALTIME=true'; } > exp.tmp
+./setup_rocoto.py exp.tmp
+mv "OPSROOT/hrly_12km/exp/rrfsenkf/rrfs.xml" "${rundir}/xml/${myexp}_rt.xml"
 
 # ens_conus12km
 # conus3km
