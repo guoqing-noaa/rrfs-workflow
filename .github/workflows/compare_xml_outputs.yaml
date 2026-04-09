@@ -45,13 +45,10 @@ jobs:
         id: diff
         run: |
           mkdir -p diff_output
-
           has_diff=0
-
           for file in $(find base_branch/tests/xml -name "*.xml"); do
             rel_path=${file#base_branch/}
             pr_file="pr_branch/$rel_path"
-
             diff_output_file="diff_output/$(basename $file).diff"
             if [ -f "$pr_file" ]; then
               diff -u -I "ENTITY HOMErrfs" "$file" "$pr_file" > "$diff_output_file" || true
@@ -65,8 +62,14 @@ jobs:
               has_diff=1
             fi
           done
-
           echo "has_diff=$has_diff" >> $GITHUB_OUTPUT
+
+      - name: Echo diffs
+        if: steps.diff.outputs.has_diff == '1'
+        run: |
+          echo "===== DIFFS FOUND ====="
+          cat diff_output/*.diff || true
+          echo "======================="
 
       - name: Upload diff artifact
         if: steps.diff.outputs.has_diff == '1'
@@ -74,3 +77,9 @@ jobs:
         with:
           name: xml-diffs
           path: diff_output/
+
+      - name: fail if diffs exist
+        if: steps.diff.outputs.has_diff == '1'
+        run: |
+          echo "!! xml outputs changed in the PR branch !!"
+          exit 1
