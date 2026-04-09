@@ -63,6 +63,8 @@ jobs:
             fi
           done
           echo "has_diff=$has_diff" >> $GITHUB_OUTPUT
+          mv base_branch/tests/xml diff_output/base_branch
+          mv pr_branch/tests/xml diff_output/pr_branch
 
       - name: Echo diffs
         if: steps.diff.outputs.has_diff == '1'
@@ -83,12 +85,14 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         if: steps.diff.outputs.has_diff == '1'
         run: |
-          ignore_number=$(head -n 1 pr_branch/tests/.ignore.compare_xml_outputs)
-          if (( ignore_number == PR_NUMBER )); then
-            echo "ignore_number == PR_NUMBER ($ignore_number == $PR_NUMBER), so ignore XML diffs"
-            exit 0
-          fi
           echo "!!! XML outputs have changed in the PR branch !!!"
           echo "Check the differences in the 'Echo diffs' section,"
           echo "Or download the zip file from the "Upload diff artifact" section to inspect them locally."
-          exit 1
+
+          ignore_number=$(head -n 1 pr_branch/tests/.ignore.compare_xml_outputs)
+          if (( ignore_number == PR_NUMBER )); then
+            echo "ignore_number == PR_NUMBER ($ignore_number == $PR_NUMBER), so ignore XML diffs."
+            exit 0
+          else
+            exit 1
+          fi
