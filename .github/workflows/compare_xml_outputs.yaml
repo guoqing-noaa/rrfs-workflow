@@ -79,23 +79,23 @@ jobs:
           path: diff_output/
 
       - name: Check override
-	id: check_override
-	env:
-	  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-	  PR_NUMBER: ${{ github.event.pull_request.number }}
-	run: |
-	  override_found=0
-	  comments=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-	    "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments")
-	  # Loop through comments
-	  echo "$comments" | jq -c '.[] | select(.user.login=="guoqing-noaa" or .user.login=="MatthewPyle-NOAA")' | while read -r comment; do
-	    body=$(echo "$comment" | jq -r '.body')
-	    if [[ "$body" == *"compare-XML-outputs=ignore"* ]]; then
-	      echo "'compare-XML-outputs=ignore' found, allow override"
-	      override_found=1
-	    fi
-	  done
-	  echo "override=$override_found" >> $GITHUB_OUTPUT
+        id: check_override
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          override_found=0
+          comments=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments")
+          # Loop through comments
+          echo "$comments" | jq -c '.[] | select(.user.login=="guoqing-noaa" or .user.login=="MatthewPyle-NOAA")' | while read -r comment; do
+            body=$(echo "$comment" | jq -r '.body')
+            if [[ "$body" == *"compare-XML-outputs=ignore"* ]]; then
+              echo "'compare-XML-outputs=ignore' found, allow override"
+              override_found=1
+            fi
+          done
+          echo "override=$override_found" >> $GITHUB_OUTPUT
 
       - name: fail if diffs exist
         if: steps.diff.outputs.has_diff == '1'
