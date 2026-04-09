@@ -12,7 +12,7 @@ sed 's|^export OPSROOT=/scratch3/BMC/wrfruc/gge/OPSROOT/${EXP_NAME}|export OPSRO
 ./setup_rocoto.py "exp.test"
 mv "OPSROOT/hrly_12km/exp/rrfsdet/rrfs.xml" "${rundir}/xml/${myexp}_retro.xml"
 
-{ cat "exp.test"; echo -e 'export REALTIME=true'; } > exp.tmp
+{ cat "exp.test"; echo -e 'export REALTIME=true\nexport DO_IODA=false'; } > exp.tmp
 ./setup_rocoto.py exp.tmp
 mv "OPSROOT/hrly_12km/exp/rrfsdet/rrfs.xml" "${rundir}/xml/${myexp}_rt.xml"
 
