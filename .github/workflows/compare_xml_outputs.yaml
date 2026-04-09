@@ -81,5 +81,7 @@ jobs:
       - name: fail if diffs exist
         if: steps.diff.outputs.has_diff == '1'
         run: |
-          echo "!! xml outputs changed in the PR branch !!"
+          echo "!!! XML outputs have changed in the PR branch !!!"
+          echo "Check the differences in the 'Echo diffs' section,"
+          echo "Or download the zip file from the "Upload diff artifact" section to inspect them locally."
           exit 1
