@@ -68,27 +68,3 @@ jobs:
         with:
           name: xml-diffs
           path: diff_output/
-
-      - name: Comment on PR with diff
-        if: steps.diff.outputs.has_diff == '1'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const path = 'diff_output';
-
-            let comment = "## ❌ XML Differences Found\n\n";
-
-            const files = fs.readdirSync(path);
-            for (const file of files) {
-              const content = fs.readFileSync(`${path}/${file}`, 'utf8');
-              if (content.trim().length > 0) {
-                comment += `### ${file}\n\`\`\`diff\n${content.slice(0, 65000)}\n\`\`\`\n`;
-              }
-            }
-
-            github.rest.issues.createComment({
-              ...context.repo,
-              issue_number: context.issue.number,
-              body: comment
-            });
