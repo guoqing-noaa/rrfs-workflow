@@ -1,0 +1,95 @@
+name: Compare XML outputs
+
+on:
+  # pull_request:
+  workflow_dispatch:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  compare-tests:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          path: pr_branch
+
+      - name: Checkout base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          path: base_branch
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies (optional)
+        run: |
+          pip install -r pr_branch/tests/pip_requirements.txt || true
+          pip install -r base_branch/pip_requirements.txt || true
+
+      - name: Run tests in base branch
+        run: |
+          cd base_branch/tests
+          ./generate_xml_files.sh
+
+      - name: Run tests in PR branch
+        run: |
+          cd pr_branch/tests
+          ./generate_xml_files.sh
+
+      - name: Compare XML outputs
+        id: diff
+        run: |
+          mkdir diff_output
+
+          has_diff=0
+
+          for file in $(find base_branch/tests/xml -name "*.xml"); do
+            rel_path=${file#base_branch/}
+            pr_file="pr_branch/$rel_path"
+
+            if [ -f "$pr_file" ]; then
+              diff -u "$file" "$pr_file" > "diff_output/$(basename $file).diff" || has_diff=1
+            else
+              echo "Missing in PR: $rel_path" >> diff_output/missing_files.diff
+              has_diff=1
+            fi
+          done
+
+          echo "has_diff=$has_diff" >> $GITHUB_OUTPUT
+
+      - name: Upload diff artifact
+        if: steps.diff.outputs.has_diff == '1'
+        uses: actions/upload-artifact@v4
+        with:
+          name: xml-diffs
+          path: diff_output/
+
+      - name: Comment on PR with diff
+        if: steps.diff.outputs.has_diff == '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = 'diff_output';
+
+            let comment = "## ❌ XML Differences Found\n\n";
+
+            const files = fs.readdirSync(path);
+            for (const file of files) {
+              const content = fs.readFileSync(`${path}/${file}`, 'utf8');
+              if (content.trim().length > 0) {
+                comment += `### ${file}\n\`\`\`diff\n${content.slice(0, 65000)}\n\`\`\`\n`;
+              }
+            }
+
+            github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
