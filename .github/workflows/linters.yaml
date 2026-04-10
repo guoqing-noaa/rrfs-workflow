@@ -40,8 +40,10 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run RRFS Code Norm Linter
+      - name: Run RRFS Code Norm Linting
         run: |
+          python3 workflow/tools/linter_rrfs_code_norm_check.py \
+            jobs/ scripts/ ush/ || true
           python3 workflow/tools/linter_rrfs_code_norm_check.py \
             --format sarif jobs/ scripts/ ush/ \
             > rrfs_code_norm_results.sarif; echo "RRFS_LINT_RC=$?" >> "$GITHUB_ENV"
@@ -57,7 +59,7 @@ jobs:
         if: always()
         run: |
           if [[ "${RRFS_LINT_RC}" != "0" ]]; then
-            echo "::error::RRFS Code Norm Linter found violations. See annotations above."
+            echo "::error::RRFS Code Norm Linting found violations. See annotations above."
             exit 1
           fi
 
