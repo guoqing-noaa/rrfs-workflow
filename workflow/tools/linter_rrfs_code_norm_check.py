@@ -798,7 +798,7 @@ def format_sarif(violations: list[Violation]) -> str:
             "id": rule_id,
             "name": rule_id,
             "shortDescription": {"text": desc},
-            "helpUri": f"https://github.com/NOAA-EMC/rrfs-workflow/blob/develop/workflow/tools/rrfs_lint.py#{rule_id}",
+            "helpUri": f"https://github.com/NOAA-EMC/rrfs-workflow/blob/develop/workflow/tools/linter_rrfs_code_norm_check.py#{rule_id}",
             "properties": {"tags": ["rrfs", "coding-standards"]},
         })
 
@@ -840,7 +840,7 @@ def format_sarif(violations: list[Violation]) -> str:
             {
                 "tool": {
                     "driver": {
-                        "name": "rrfs_lint",
+                        "name": "RRFS Code Norm Linter",
                         "informationUri": "https://github.com/NOAA-EMC/rrfs-workflow",
                         "version": "1.0.0",
                         "rules": rule_descriptors,
