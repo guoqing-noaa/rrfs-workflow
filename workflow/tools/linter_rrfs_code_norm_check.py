@@ -787,8 +787,31 @@ def format_json(violations: list[Violation]) -> str:
 
 
 def format_sarif(violations: list[Violation]) -> str:
-    """SARIF 2.1.0 output for GitHub Code Scanning integration."""
+    """SARIF 2.1.0 output for GitHub Code Scanning integration.
+
+    Also prints a human-readable summary to stderr so CI logs are readable
+    """
     import json
+
+    # Print human-readable summary to stderr
+    if violations:
+        print("\n" + "=" * 60, file=sys.stderr)
+        print("RRFS Code Norm Linting — Defects found, NEEDS INSPECTION", file=sys.stderr)
+        print("=" * 60 + "\n", file=sys.stderr)
+        for v in violations:
+            sev_tag = "RRFS_ERROR" if v.severity == "error" else "RRFS_WARNING"
+            print(f"{sev_tag}:", file=sys.stderr)
+            print(f"  {v.filepath}:{v.line_no}:{v.col}: {v.severity}[{v.rule_id}]: {v.message}", file=sys.stderr)
+            print(f"  Suggestion: {v.suggestion}", file=sys.stderr)
+            print("", file=sys.stderr)
+        errors = sum(1 for v in violations if v.severity == "error")
+        warnings = sum(1 for v in violations if v.severity == "warning")
+        files = len(set(v.filepath for v in violations))
+        print("=" * 60, file=sys.stderr)
+        print(f"Total: {len(violations)} defects ({errors} errors, {warnings} warnings) "
+              f"in {files} file(s)", file=sys.stderr)
+    else:
+        print("RRFS Code Norm Linting — all files passed.", file=sys.stderr)
 
     rules_seen: dict[str, int] = {}  # rule_id -> index
     rule_descriptors = []
@@ -917,7 +940,7 @@ def list_rules():
 def main():
     parser = argparse.ArgumentParser(
         prog="rrfs_lint",
-        description="RRFS Code Norm Linter — lint shell scripts against RRFS coding norms.",
+        description="RRFS Code Norm Linting — lint shell scripts against RRFS coding norms.",
     )
     parser.add_argument(
         "paths",

@@ -43,8 +43,6 @@ jobs:
       - name: Run RRFS Code Norm Linter
         run: |
           python3 workflow/tools/linter_rrfs_code_norm_check.py \
-            jobs/ scripts/ ush/ || true
-          python3 workflow/tools/linter_rrfs_code_norm_check.py \
             --format sarif jobs/ scripts/ ush/ \
             > rrfs_code_norm_results.sarif; echo "RRFS_LINT_RC=$?" >> "$GITHUB_ENV"
 
