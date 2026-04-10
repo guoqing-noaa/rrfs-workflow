@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 rrfs_lint — RRFS Code Norm Linting
 
@@ -857,11 +857,18 @@ def format_github(violations: list[Violation]) -> str:
     """GitHub Actions workflow command format.
 
     Emits ::error and ::warning commands that produce inline annotations
-    on pull request diffs.  Works for fork PRs (no special permissions needed).
+    on pull request diffs, plus a human-readable summary in the step log
     """
     lines = []
     for v in violations:
-        # Escape special characters for workflow commands
+        # Human-readable log line (visible in the Actions step detail page)
+        sev_tag = "RRFS_ERROR" if v.severity == "error" else "RRFS_WARNING"
+        lines.append(f"Error: {sev_tag}:")
+        lines.append(f"{v.filepath}:{v.line_no}:{v.col}: {v.severity}[{v.rule_id}]: {v.message}")
+        lines.append(f"  Suggestion: {v.suggestion}")
+        lines.append("")
+
+        # Workflow command (produces inline annotation on PR diff)
         msg = v.message.replace('%', '%25').replace('\n', '%0A').replace('\r', '%0D')
         sug = v.suggestion.replace('%', '%25').replace('\n', '%0A').replace('\r', '%0D')
         cmd = "error" if v.severity == "error" else "warning"
@@ -869,6 +876,18 @@ def format_github(violations: list[Violation]) -> str:
             f"::{cmd} file={v.filepath},line={v.line_no},col={v.col},"
             f"title={v.rule_id}::{msg} | Suggestion: {sug}"
         )
+        lines.append("")
+
+    # Summary
+    if violations:
+        errors = sum(1 for v in violations if v.severity == "error")
+        warnings = sum(1 for v in violations if v.severity == "warning")
+        files = len(set(v.filepath for v in violations))
+        lines.append("=" * 60)
+        lines.append(f"RRFS Code Norm: {len(violations)} defects ({errors} errors, {warnings} warnings) in {files} file(s), NEEDS INSPECTION")
+    else:
+        lines.append("RRFS Code Norm: all files passed.")
+
     return "\n".join(lines)
 
 
