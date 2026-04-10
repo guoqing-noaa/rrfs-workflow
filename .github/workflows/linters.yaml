@@ -27,6 +27,10 @@ jobs:
     name: RRFS Code Norm Linting
     runs-on: ubuntu-latest
 
+    permissions:
+      security-events: write  # Required for SARIF upload (auto-close fixed alerts)
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -39,7 +43,25 @@ jobs:
       - name: Run RRFS Code Norm Linter
         run: |
           python3 workflow/tools/linter_rrfs_code_norm_check.py \
-            --format github jobs/ scripts/ ush/
+            --format github jobs/ scripts/ ush/ || true
+          python3 workflow/tools/linter_rrfs_code_norm_check.py \
+            --format sarif jobs/ scripts/ ush/ \
+            > rrfs_code_norm_results.sarif; echo "RRFS_LINT_RC=$?" >> "$GITHUB_ENV"
+
+      - name: Upload SARIF results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: rrfs_code_norm_results.sarif
+          category: rrfs-code-norm
+
+      - name: Fail if RRFS Code Norm violations found
+        if: always()
+        run: |
+          if [[ "${RRFS_LINT_RC}" != "0" ]]; then
+            echo "::error::RRFS Code Norm Linter found violations. See annotations above."
+            exit 1
+          fi
 
   python-lint:
     name: Python Linting
