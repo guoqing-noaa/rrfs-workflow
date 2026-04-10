@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0  # Ensures full commit history for diff comparison
 
@@ -42,6 +42,9 @@ jobs:
 
       - name: Run RRFS Code Norm Linter
         run: |
+          python3 workflow/tools/linter_rrfs_code_norm_check.py \
+                      --format github \
+                                  jobs/ scripts/ ush/ || true
           python3 workflow/tools/linter_rrfs_code_norm_check.py \
             --format sarif \
             jobs/ scripts/ ush/ \
