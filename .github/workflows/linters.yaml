@@ -23,6 +23,37 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+  rrfs-code-norm:
+    name: RRFS Code Norm Linting
+    runs-on: ubuntu-latest
+
+    permissions:
+      security-events: write  # Required for upload-sarif (works for fork PRs)
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Run RRFS Code Norm Linter
+        run: |
+          python3 workflow/tools/linter_rrfs_code_norm_check.py \
+            --format sarif \
+            jobs/ scripts/ ush/ \
+            > rrfs_lint_results.sarif || true
+
+      - name: Upload SARIF results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: rrfs_lint_results.sarif
+          category: rrfs-code-norm
+
   python-lint:
     name: Python Linting
     runs-on: ubuntu-latest

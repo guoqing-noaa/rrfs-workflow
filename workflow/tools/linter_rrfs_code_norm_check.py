@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 rrfs_lint — RRFS Code Norm Linting
 
