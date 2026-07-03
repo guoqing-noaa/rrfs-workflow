@@ -173,6 +173,19 @@ elif [[ ${MESH_NAME} == "global12km" ]]; then
   export MPASSIT_REF_LAT=38.5
   export MPASSIT_REF_LON=-97.5
 
+elif [[ ${MESH_NAME} == "global15km" ]]; then
+  export FCST_DT=50
+  export FCST_SUBSTEPS=6
+  export FCST_RADT=25
+  export FCST_GFL_SUB3D=0
+  export UPP_DOMAIN="conus."
+
+  export MPASSIT_NX=1800
+  export MPASSIT_NY=1060
+  export MPASSIT_DX=12000.0
+  export MPASSIT_REF_LAT=38.5
+  export MPASSIT_REF_LON=-97.5
+
 elif [[ ${MESH_NAME} == "global-15-3km" ]]; then
   export FCST_DT=20
   export FCST_SUBSTEPS=4
