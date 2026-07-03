@@ -182,7 +182,7 @@ elif [[ ${MESH_NAME} == "global15km" ]]; then
 
   export MPASSIT_NX=1800
   export MPASSIT_NY=1060
-  export MPASSIT_DX=12000.0
+  export MPASSIT_DX=15000.0
   export MPASSIT_REF_LAT=38.5
   export MPASSIT_REF_LON=-97.5
 

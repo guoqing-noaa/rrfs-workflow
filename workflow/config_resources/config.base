@@ -26,9 +26,9 @@ export MPASOUT_SAVE2COM_HRS=${MPASOUT_SAVE2COM_HRS:-""}  # cycling mpasout.nc is
 #export POST_GROUP_SPEC="0-10 11-20 21-30 31-36" # customized group specification; setting this variable will overwrite POST_GROUP_TOT_NUM
 export REGRID_RRFS_GRIB2=${REGRID_RRFS_GRIB2:-false}
 export LSM_SCHEME=${LSM_SCHEME:-"sf_ruc"}
-export NUM_SOIL_LAYERS=9  # sf_ruc, sf_noahmp
-if [[ "${LSM_SCHEME}" == "sf_noah" ]]; then
-  export NUM_SOIL_LAYERS=4
+export NSOIL_LEVELS=${NSOIL_LEVELS:-9}  # sf_ruc
+if [[ "${LSM_SCHEME}" == *noah* ]]; then  # sf_noah, sf_noahmp
+  export NSOIL_LEVELSE=${NSOIL_LEVELS:-4}
 fi
 
 # required options if DO_RTMA
