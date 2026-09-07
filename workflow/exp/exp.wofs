@@ -2,16 +2,17 @@
 # Aloha! This file is to setup some top level experiment options
 #
 # shellcheck disable=all
-# wofs domain specification
-export WOFS_LAT=${WOFS_LAT:-"35.182"}
-export WOFS_LON=${WOFS_LON:-"-97.439"}
-export WOFS_XLEN=${WOFS_XLEN:-"900"}  # unit: km
-export WOFS_YLEN=${WOFS_YLEN:-"900"}  # unit: km
-export WOFS_DX=${WOFS_DX:-"3"}  # DX=DY in km
-export WOFS_PERIOD=${WOFS_PERIOD:-"2024050600-2024050700"}
+# wofs domain specification will be updated automatically in the setup process
+export WOFS_INDEX=${WOFS_INDEX:-"1"}
+export WOFS_LAT="35.182"
+export WOFS_LON="-97.439"
+export WOFS_PERIOD="2024050615-2024050703"
+export WOFS_XLEN="900"  # unit: km
+export WOFS_YLEN="900"  # unit: km
+export WOFS_DX="3"      # DX=DY in km
 #
 export NET=wofs
-export MESH_NAME=${MESH_NAME:-domain1}  # domain1, domain2, ..., corresponding to different concurrent wofs domains
+export MESH_NAME="domain${WOFS_INDEX}"  # domain1, domain2, ..., corresponding to different concurrent wofs domains
 export WGF=${MESH_NAME}   # working group function, use "domain1", "domain2", etc for WoFS
 export EXP_NAME=wofs
 export VERSION=$(cat ./VERSION)
@@ -21,6 +22,7 @@ export EXPDIR=${OPSROOT}/exp/${NET}${WGF}
 export COMROOT=${OPSROOT}/com      # task input and output data as well as logs
 export DATAROOT=${OPSROOT}/stmp    # task workdirs ($DATA) which to be removed immediately upon task completion unless KEEPDATA=YES
 #
+export DO_WOFS=true
 export DO_ENSEMBLE=true
 export DO_ENSMEAN_POST=false
 export IC_ONLY=false #true  # interpolate GEFS/GDAS to the target mesh to provide ensemble BEC
@@ -44,6 +46,7 @@ export DO_CLEAN=true
 export RADARREFL_TIMELEVEL="00"  # 00 15 30 45 min
 export SAT_USELIST=""  # check config.base on how to set up this variable
 export DO_SPPT=false
+export JEDI_POLYGON_FILTER=false
 
 export DO_CYC=true
 export SUBCYC_INTERVAL=15
@@ -62,7 +65,7 @@ export DO_POST=false
 export IC_OFFSET=33
 export LBC_OFFSET=33
 export LBC_LENGTH=15
-export LBC_INTERVAL="00:15:00"
+export LBC_INTERVAL_SUBCYC="15"
 export LBC_UNGRIB_GROUP_TOTAL_NUM=1
 export LBC_GROUP_TOTAL_NUM=2
 export PREP_LBC_LOOK_BACK_HRS=11
