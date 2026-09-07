@@ -55,7 +55,7 @@ def smart_superyaml(HOMErrfs, ytype, mesh, getkf_onestep=False):
 
     #
     # insert correct domain-specific polygon configuration
-    if os.getenv("JEDI_POLYGON_FILTER", "FALSE") == "TRUE":
+    if os.getenv("JEDI_POLYGON_FILTER", "TRUE") == "TRUE":
         fpolygon = f'{HOMErrfs}/fix/{mesh}/{mesh}.polygon.yaml'
         polygon = hy.load(fpolygon)
         data[0:0] = polygon  # insert at the beginning
