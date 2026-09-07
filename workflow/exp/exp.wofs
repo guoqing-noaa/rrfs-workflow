@@ -2,12 +2,20 @@
 # Aloha! This file is to setup some top level experiment options
 #
 # shellcheck disable=all
-export NET=rrfs                    # rrfs, rtma, 
-export MESH_NAME=conus3km         # conus12km, conus3km, na12km, etc
-export WGF="enkf"   # working group function = "det", "enkf", "ens", "firewx"
-export EXP_NAME=conus3km
+# wofs domain specification
+export WOFS_LAT=${WOFS_LAT:-"35.182"}
+export WOFS_LON=${WOFS_LON:-"-97.439"}
+export WOFS_XLEN=${WOFS_XLEN:-"900"}  # unit: km
+export WOFS_YLEN=${WOFS_YLEN:-"900"}  # unit: km
+export WOFS_DX=${WOFS_DX:-"3"}  # DX=DY in km
+export WOFS_PERIOD=${WOFS_PERIOD:-"2024050600-2024050700"}
+#
+export NET=wofs
+export MESH_NAME=${MESH_NAME:-domain1}  # domain1, domain2, ..., corresponding to different concurrent wofs domains
+export WGF=${MESH_NAME}   # working group function, use "domain1", "domain2", etc for WoFS
+export EXP_NAME=wofs
 export VERSION=$(cat ./VERSION)
-export TAG=e3km
+export TAG=d1
 export OPSROOT=/scratch3/BMC/wrfruc/gge/OPSROOT/${EXP_NAME}
 export EXPDIR=${OPSROOT}/exp/${NET}${WGF}
 export COMROOT=${OPSROOT}/com      # task input and output data as well as logs
@@ -28,41 +36,44 @@ export DO_JEDI=true
 export GETKF_ONESTEP=true
 export DO_NONVAR_CLOUD_ANA=true
 export COLDSTART_CYCS_DO_DA=true
-export DO_RECENTER=true
+export DO_RECENTER=false
 export DO_RADAR_REF=true
-export DO_GETKF_POST=true
-export SAVE_GETKF_ANL=true
+export DO_GETKF_POST=false
+export SAVE_GETKF_ANL=false
 export DO_CLEAN=true
 export RADARREFL_TIMELEVEL="00"  # 00 15 30 45 min
 export SAT_USELIST=""  # check config.base on how to set up this variable
 export DO_SPPT=false
 
 export DO_CYC=true
-export CYC_INTERVAL=1
-for i in {0..23};    do arr[$i]="01"; done # 3hr fcst
-export FCST_LEN_HRS_CYCLES="${arr[*]}"
-export HISTORY_INTERVAL=1
-export DIAG_INTERVAL=1
-export MPASOUT_TIMELEVELS="0 1"
+export SUBCYC_INTERVAL=15
+#for i in {0..59};    do arr[$i]="0"; done # placeholder
+#for i in {0..59..15}; do arr[$i]="15m"; done # 15 minutes forecast every 15 minutes
+#for i in {0..59..30}; do arr[$i]="3h"; done # 3 hour forecast very 30 minutes
+#for i in {0..59..60}; do arr[$i]="6h"; done # 6 hour forecast at the top of the hour
+#export FCST_LEN_HRS_SUBCYCS="${arr[*]}"
+export FCST_LEN_HRS_SUBCYCS='{"default":"15m", "30":"3h", "00":"6h"}'  # use " inside and ' outside
+export HISTORY_INTERVAL="00:05:00"
+export DIAG_INTERVAL="00:05:00"
+export MPASOUT_TIMELEVELS="15m"
 export POST_GROUP_TOT_NUM=2 # num of groups, the final group absorbs leftovers, the first group contains the extra f000h file
 export DO_POST=false
 
 export IC_OFFSET=33
 export LBC_OFFSET=33
 export LBC_LENGTH=15
-export LBC_INTERVAL=1
+export LBC_INTERVAL="00:15:00"
 export LBC_UNGRIB_GROUP_TOTAL_NUM=1
 export LBC_GROUP_TOTAL_NUM=2
 export PREP_LBC_LOOK_BACK_HRS=11
 
-export RETRO_PERIOD="2024050609-2024051300"
-export LBC_CYCS="09 21"
-export COLDSTART_CYCS="09 21"   # cycles to cold start from external models
+export LBC_CYCS="15"
+export COLDSTART_CYCS="15"   # cycles to cold start from external models
 export RECENTER_CYCS="${COLDSTART_CYCS}"
 export DET_RECENTERCYCS_DO_DA=true #true # whether or not do detministic DA at RECENTER_CYCS
 export DET_RECENTERCYCS_CLDANA=true #true # whether or not do detministic NONVAR_CLOUD_ANA at RECENTER_CYCS
 #
-export DO_PYDAMONITOR=true
+#export DO_PYDAMONITOR=true
 #export DO_GRAPHICS=true
 #export GRAPHICS_TILES="full NE NC NW SE SC SW EastCO"
 #export DO_ARCHIVE=true
