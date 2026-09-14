@@ -33,23 +33,6 @@ yaml_list=(
 #"bufr2ioda_cris-fsr.yaml"
 )
 
-if (( ${YAML_GEN_METHOD:-1} == 2 )); then
-  # Copy empty ioda file to data/obs.
-  # Use these as the default when bufr2ioda doesn't create a ioda.
-  # Otherwise JEDI will crash due to missing ioda file
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_adpsfc.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_adpupa.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_aircar.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_aircft.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_ascatw.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_gpsipw.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_msonet.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_proflr.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_rassda.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_sfcshp.nc
-  ${cpreq} "${FIXrrfs}"/jedi/ioda_empty.nc ioda_vadwnd.nc
-fi
-
 # run bufr2ioda.x
 for yaml in "${yaml_list[@]}"; do
  sed -e "s/@referenceTime@/${REFERENCE_TIME}/" "${PARMrrfs}/${yaml}" > "${yaml}"
@@ -72,9 +55,9 @@ else
   echo "Input file ${input_file} does not exist."
 fi
 
-# --------------------------------------------------
-# run  bufr2netcdf tool for cris-fsr bufr obs
-# --------------------------------------------------
+# ---------------------------------------------------------------------
+# run bufr2netcdf tool for cris-fsr regular feed(crisfrbufr) bufr obs
+# ---------------------------------------------------------------------
 ${cpreq} "${PARMrrfs}/bufr2netcdf_cris-fsr.yaml" .
 input_file="crisfsbufr"
 output_file="ioda_crisf4_{splits/satId}.nc"
@@ -85,8 +68,21 @@ else
   echo "Input file ${input_file} does not exist."
 fi
 
+# -------------------------------------------------------------------
+# run bufr2netcdf tool for cris-fsr DB feed (crsfdbbufr) bufr obs
+# -------------------------------------------------------------------
+${cpreq} "${PARMrrfs}/bufr2netcdf_cris-fsr.yaml" .
+input_file="crsfdbbufr"
+output_file="ioda_crsfdb_{splits/satId}.nc"
+yaml="bufr2netcdf_cris-fsr.yaml"
+if [[ -s "${input_file}" ]]; then
+  ./bufr2netcdf.x "${input_file}" "${yaml}" "${output_file}"
+else
+  echo "Input file ${input_file} does not exist."
+fi
+
 # --------------------------------------------------
-# run  bufr2netcdf tool for mtiasi bufr obs
+# run bufr2netcdf tool for mtiasi bufr obs
 # --------------------------------------------------
 ${cpreq} "${PARMrrfs}/bufr2netcdf_mtiasi.yaml" .
 input_file="iasibufr"
