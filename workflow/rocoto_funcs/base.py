@@ -28,6 +28,7 @@ def source(bash_file, optional=False):
         if not entry:
             continue
         key, sep, value = entry.partition("=")
+        key = key.strip()
         if key and sep and not key.startswith("BASH_FUNC_"):
             env_vars[key] = value
     # Update the current environment
