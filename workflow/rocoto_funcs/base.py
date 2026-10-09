@@ -29,10 +29,14 @@ def source(bash_file, optional=False):
             continue
         key, sep, value = entry.partition("=")
         key = key.strip()
+        if 'LBC_' in key:
+            print(f'[DEBUG] entry key={key!r}, val={value!r}')
         if key and sep and not key.startswith("BASH_FUNC_"):
             env_vars[key] = value
     # Update the current environment
     os.environ.update(env_vars)
+    if 'exp.' in bash_file:
+        print(f'[DEBUG source {bash_file}] os.getenv(LBC_GROUP_TOTAL_NUM)={os.getenv("LBC_GROUP_TOTAL_NUM")!r}, os.getenv(LBC_UNGRIB_GROUP_TOTAL_NUM)={os.getenv("LBC_UNGRIB_GROUP_TOTAL_NUM")!r}')
 # end of source(bash_file)
 
 # run_git_command
